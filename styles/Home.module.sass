@@ -1,2 +1,215 @@
 .main
-  opacity: 1
+  display: flex
+  flex-direction: column
+  gap: ds.rem(23)
+  width: 100%
+  margin: 0 auto
+
+  @include ds.mq(minSmall)
+    padding: ds.rem(15) 0
+    width: 100%
+
+  @include ds.mq(minMedium)
+    margin: 0
+
+  @include ds.mq(maxExtraSmall)
+    background-color: ds.$hex-white
+    max-width: none
+    width: 100%
+
+    body[data-theme='dark'] &
+      background-color: ds.$hex-black
+
+  @include ds.mq(maxExtraSmall)
+    padding-top: ds.rem(23)
+    padding-bottom: ds.rem(23)
+
+  .container
+    display: flex
+
+    @include ds.mq(minLarge)
+      flex-wrap: wrap
+
+    @include ds.mq(maxExtraSmall)
+      gap: ds.rem(12)
+      padding-right: 0
+      padding-left: 0
+
+    @include ds.mq(maxMedium)
+      flex-direction: column
+
+    .announcement
+      margin-right: ds.rem(12)
+      margin-left: ds.rem(32)
+      font-weight: 500
+      list-style: square
+
+      strong
+        font-weight: 700
+        color: ds.$hex-accent
+
+      .warning
+        color: ds.$hex-danger
+
+section.section
+  display: flex
+  flex-direction: column
+  gap: ds.rem(23)
+  margin: 0 auto
+
+  @include ds.mq(minSmall)
+    padding: ds.rem(15) ds.rem(12)
+    width: 100%
+
+  @include ds.mq(minLarge)
+    margin: 0
+
+    &:last-of-type
+      padding-bottom: 0
+
+  @include ds.mq(maxExtraSmall)
+    background-color: ds.$hex-white
+    width: 100%
+
+    body[data-theme='dark'] &
+      background-color: ds.$hex-black
+
+  .module
+    display: flex
+    flex-direction: column
+    flex-grow: 1
+    gap: ds.rem(13)
+    padding: ds.rem(17)
+
+    @include ds.mq(minSmall)
+      border: ds.rem(2) solid ds.$hex-light
+      border-radius: ds.rem(17)
+
+      body[data-theme='dark'] &
+        border: ds.rem(2) solid ds.$hex-black
+
+    > h2
+      font-size: ds.rem(20)
+      @include ds.fw(500)
+
+    > p
+      @include ds.fw(600)
+      text-align: center
+
+  fieldset
+    display: flex
+    flex-direction: column
+    gap: ds.rem(5)
+
+    .group
+      display: flex
+      align-items: center
+      gap: ds.rem(5)
+
+      input, select
+        @include ds.col
+
+    label
+      display: flex
+      align-items: center
+      border-bottom: ds.rem(2) solid transparent
+      width: ds.rem(92)
+
+    select
+      cursor: pointer
+
+    select, input[type='number'], input[type='text'], label
+      height: ds.rem(37)
+      font-size: ds.rem(18)
+
+    select, input[type='number'], input[type='text'], input[type='password']
+      appearance: none
+      background-color: transparent
+      border: 0
+      border-bottom: ds.rem(2) solid ds.$hex-gray-light
+      border-radius: 0
+      padding: 0
+      transition: all .4s cubic-bezier(.4,0,.2,1)
+
+      &:focus, &:focus-visible
+        outline: 0
+        border-bottom: ds.rem(5) solid ds.$hex-accent
+        color: ds.$hex-accent
+
+      body[data-theme='dark'] &
+        bottom-bottom-color: ds.$hex-accent
+
+        &:focus, &:focus-visible
+          border-bottom-color: ds.$hex-accent
+          color: ds.$hex-accent
+
+    .value
+      @include ds.col
+
+      input, select
+        width: 100%
+
+    .groups
+      display: flex
+      gap: ds.rem(5)
+
+      @include ds.mq(maxExtraSmall)
+        flex-direction: column
+
+      @include ds.mq(minSmall)
+        flex-wrap: wrap
+
+        .group
+          width: calc(50% - ds.rem(3))
+
+          &:nth-of-type(3)
+            width: 100%
+
+    .submit
+      padding-top: ds.rem(12)
+      width: 100%
+
+      button
+        background-color: transparent
+        border: ds.rem(2) solid
+        border-radius: ds.rem(3)
+        width: 100%
+        height: ds.rem(52)
+        font-size: ds.rem(16)
+        @include ds.fw(500)
+        color: ds.$hex-accent
+
+        body[data-theme='dark'] &
+          color: ds.$hex-accent
+
+  .table
+    overflow-x: auto
+    -webkit-overflow-scrolling: touch
+    width: 100%
+    margin-bottom: 1rem
+    vertical-align: top
+    border-color: var(--bs-table-border-color)
+
+    table
+      caption-side: bottom
+      border-collapse: collapse
+
+      th
+        text-align: -webkit-match-parent
+
+      th, td
+        padding: ds.rem(7)
+        border-bottom-width: var(--bs-border-width)
+        box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 9999px inset
+
+      th
+        font-size: ds.rem(16)
+        font-weight: 500
+
+      td
+        border-bottom: ds.rem(1) solid ds.$hex-gray-dark
+        font-size: ds.rem(14)
+        font-weight: 400
+
+      tbody
+        border-top: ds.rem(2) solid ds.$hex-gray-dark

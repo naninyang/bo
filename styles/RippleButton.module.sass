@@ -1,0 +1,46 @@
+.btn, .rb, .general
+  overflow: hidden
+
+.btn, .rb
+  position: relative
+
+  span
+    position: absolute
+    background-color: rgba(ds.$hex-black, 0.2)
+
+    body[data-theme='dark'] &
+      background-color: rgba(ds.$hex-white, 0.2)
+
+.btn
+  span
+    top: 0
+    left: 0
+    width: 100%
+    height: 100%
+    animation: btn 600ms ease
+
+.rb
+  span
+    border-radius: 50%
+    transform: scale(0)
+    animation: ripple 600ms linear
+
+.general
+  transition: all .4s cubic-bezier(.4,0,.2,1)
+
+  &:hover, &:focus-visible
+    background-color: ds.$hex-accent
+    color: ds.$hex-black!important
+
+@keyframes btn
+  0%
+    opacity: 0
+  30%
+    opacity: 1
+  100%
+    opacity: 0
+
+@keyframes ripple
+  to
+    transform: scale(4)
+    opacity: 0
