@@ -1,0 +1,48 @@
+.usage
+  padding: 0
+
+  .container
+    position: relative
+    z-index: 1
+    display: flex
+    flex-direction: column
+    justify-content: center
+    gap: ds.rem(23)
+    width: 100%
+    padding-top: ds.rem(53)
+    padding-bottom: ds.rem(53)
+
+    .svg
+      display: flex
+      justify-content: center
+
+    svg
+      width: ds.rem(320)
+      height: auto
+
+    .notice
+      text-align: center
+
+    .staff
+      padding-top: ds.rem(53)
+
+      dl
+        display: flex
+        flex-direction: column
+        align-items: center
+        gap: ds.rem(12)
+        width: 100%
+
+        div
+          display: flex
+          align-items: center
+          gap: ds.rem(12)
+
+          dt
+            text-align: right
+            opacity: .7
+            width: ds.rem(103)
+
+          dd
+            @include ds.fw(700)
+            width: ds.rem(180)
