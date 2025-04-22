@@ -11,7 +11,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
   const [isDarkMode, setIsDarkMode] = useState(false);
 
   useEffect(() => {
-    const t = localStorage.getItem('t') || 'light';
+    const t = localStorage.getItem('t') || 'dark';
     document.body.setAttribute('data-theme', t);
     setIsDarkMode(t === 'dark');
   }, []);

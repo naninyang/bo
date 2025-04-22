@@ -25,12 +25,15 @@
     transform: scale(0)
     animation: ripple 600ms linear
 
-.general
+.general.general
   transition: all .4s cubic-bezier(.4,0,.2,1)
 
   &:hover, &:focus-visible
-    background-color: ds.$hex-accent
-    color: ds.$hex-black!important
+    outline: ds.rem(2) solid rgba(ds.$hex-accent, .5)
+    border-color: ds.$hex-accent!important
+    background-color: ds.$hex-accent!important
+    @include ds.fw(700)
+    color: ds.$hex-white!important
 
 @keyframes btn
   0%

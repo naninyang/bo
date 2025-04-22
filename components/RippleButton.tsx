@@ -17,8 +17,11 @@ export default function RippleButton({ children, onClick, className = '', ariaLa
   const [monitor, setMonitor] = useState<boolean>();
   const buttonRef = useRef<HTMLButtonElement | null>(null);
 
+  const isIPadOS = () => {
+    return navigator.userAgent.includes('Macintosh') && 'ontouchend' in document;
+  };
   useEffect(() => {
-    if (isIOS) {
+    if (isIOS || isIPadOS()) {
       setIos(true);
     } else if (isAndroid) {
       seAndroid(true);

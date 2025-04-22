@@ -136,13 +136,6 @@ section.section
         border-bottom: ds.rem(5) solid ds.$hex-accent
         color: ds.$hex-accent
 
-      body[data-theme='dark'] &
-        bottom-bottom-color: ds.$hex-accent
-
-        &:focus, &:focus-visible
-          border-bottom-color: ds.$hex-accent
-          color: ds.$hex-accent
-
     .value
       @include ds.col
 
@@ -179,9 +172,6 @@ section.section
         @include ds.fw(500)
         color: ds.$hex-accent
 
-        body[data-theme='dark'] &
-          color: ds.$hex-accent
-
   .table
     overflow-x: auto
     -webkit-overflow-scrolling: touch
@@ -199,8 +189,7 @@ section.section
 
       th, td
         padding: ds.rem(7)
-        border-bottom-width: var(--bs-border-width)
-        box-shadow: rgba(0, 0, 0, 0) 0px 0px 0px 9999px inset
+        border-bottom-width: 1px
 
       th
         font-size: ds.rem(16)
@@ -211,5 +200,11 @@ section.section
         font-size: ds.rem(14)
         font-weight: 400
 
+        body[data-theme='dark'] &
+          border-bottom: ds.rem(1) solid ds.$hex-gray-light
+
       tbody
         border-top: ds.rem(2) solid ds.$hex-gray-dark
+
+        body[data-theme='dark'] &
+          border-bottom: ds.rem(1) solid ds.$hex-gray-light
