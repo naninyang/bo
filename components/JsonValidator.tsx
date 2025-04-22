@@ -1,11 +1,10 @@
-'use client';
-
 import { useState, FormEvent } from 'react';
+import { FlatJsonObject } from '@/types';
 import RippleButton from './RippleButton';
 import styles from '@/styles/Home.module.sass';
 
 type Props = {
-  onValidData: (data: Record<string, any>[] | null, status: 'loading' | 'success' | 'error') => void;
+  onValidData: (data: FlatJsonObject[] | null, status: 'loading' | 'success' | 'error') => void;
 };
 
 type AuthType = 'none' | 'basic' | 'bearer' | 'apikey';

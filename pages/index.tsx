@@ -1,14 +1,15 @@
 import { useState } from 'react';
+import { FlatJsonObject } from '@/types';
 import Seo from '@/components/Seo';
 import JsonValidator from '@/components/JsonValidator';
 import TableView from '@/components/TableView';
 import styles from '@/styles/Home.module.sass';
 
 export default function Home() {
-  const [jsonData, setJsonData] = useState<Record<string, any>[] | null>(null);
+  const [jsonData, setJsonData] = useState<FlatJsonObject[] | null>(null);
   const [status, setStatus] = useState<'loading' | 'success' | 'error' | null>(null);
 
-  const handleValidData = (data: Record<string, any>[] | null, status: 'loading' | 'success' | 'error') => {
+  const handleValidData = (data: FlatJsonObject[] | null, status: 'loading' | 'success' | 'error') => {
     setJsonData(data);
     setStatus(status);
   };

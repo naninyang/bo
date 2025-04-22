@@ -1,7 +1,8 @@
 import styles from '@/styles/Home.module.sass';
+import { FlatJsonObject } from '@/types';
 
 type Props = {
-  data: Record<string, any>[];
+  data: FlatJsonObject[];
 };
 
 export default function TableView({ data }: Props) {

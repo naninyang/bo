@@ -1,11 +1,9 @@
 import Anchor from './Anchor';
-import { useRouter } from 'next/router';
 import { useTheme } from './context/ThemeContext';
 import { LogoDark, LogoLight, ModeDark, ModeLight } from './Svgs';
 import styles from '@/styles/Header.module.sass';
 
 export default function Header() {
-  const router = useRouter();
   const { isDarkMode, toggleTheme } = useTheme();
 
   return (
