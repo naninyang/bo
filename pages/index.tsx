@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Seo from '@/components/Seo';
 import JsonValidator from '@/components/JsonValidator';
 import TableView from '@/components/TableView';
 import styles from '@/styles/Home.module.sass';
@@ -12,8 +13,14 @@ export default function Home() {
     setStatus(status);
   };
 
+  const timestamp = Date.now();
+
   return (
     <main className={styles.main}>
+      <Seo
+        pageDescription="하나의 JSON으로 테이블과 차트를 볼 수 있어요!"
+        pageImg={`https://bo.dev1stud.io/images/og.webp?ts=${timestamp}`}
+      />
       <div className={styles.container}>
         <ul className={styles.announcement}>
           <li>
