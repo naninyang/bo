@@ -33,10 +33,11 @@ export default function Home() {
           <li>
             JSON 속성명(field name) 및 속성값(field value)은 <strong>Raw Text 형태</strong>로 표시됩니다.
           </li>
+          <li>Notion Database API를 사용하실 수 있습니다.</li>
           <li>입력하신 엔드포인트 정보는 서버에 저장되지 않습니다.</li>
-          <li>일트보자 웹서비스는 데이터베이스와 관련된 일체의 서버를 사용하지 않습니다.</li>
+          <li>일트보자 웹서비스는 데이터베이스와 관련된 일체의 서버를 운용하지 않습니다.</li>
           <li className={styles.warning}>
-            Auth Type을 선택해서 사용하는 경우 인증 정보가 Evil Twin Attack, Session Hijacking, DNS Spoofing / DNS
+            Auth Type을 선택하여 사용하는 경우 인증 정보가 Evil Twin Attack, Session Hijacking, DNS Spoofing / DNS
             Hijacking 등의 사유로 탈취당할 수 있습니다.{' '}
             <strong>
               인증 정보 입력시에는 VPN을 사용하시거나 스마트폰을 이용한 테더링, 핫스팟을 사용하시는 것을 추천드립니다.
