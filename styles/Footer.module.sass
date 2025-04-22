@@ -1,0 +1,54 @@
+footer.footer
+  position: relative
+  z-index: 1
+  background-color: ds.$hex-dark
+
+  body[data-theme='dark'] &
+    background-color: ds.$hex-black
+
+  .container
+    display: flex
+    flex-direction: column
+    gap: ds.rem(23)
+    padding-top: ds.rem(52)
+    padding-bottom: ds.rem(52)
+
+  ul
+    display: flex
+    gap: ds.rem(12)
+
+    li
+      display: inline-flex
+      gap: ds.rem(12)
+      align-items: center
+
+      &::before
+        content: ''
+        display: inline-block
+        background-color: ds.$hex-light
+        border-radius: 100%
+        width: ds.rem(4)
+        height: ds.rem(4)
+
+      &:first-of-type::before
+        display: none
+
+      a
+        font-size: ds.rem(14)
+        letter-spacing: -.02em
+        color: ds.$hex-light
+
+  p
+    display: flex
+    justify-content: flex-start
+    gap: ds.rem(5)
+    font-size: ds.rem(12)
+    letter-spacing: -.02em
+    color: ds.$hex-gray-light
+
+    svg
+      width: ds.rem(105)
+      height: ds.rem(14)
+
+    strong
+      @include ds.screen-reader-only

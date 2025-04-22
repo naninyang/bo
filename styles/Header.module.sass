@@ -1,0 +1,141 @@
+header.header
+  position: relative
+  z-index: 1
+  background-color: ds.$hex-white
+  border-bottom: 1px solid ds.$hex-gray-dark
+
+  body[data-theme='dark'] &
+    background-color: ds.$hex-black
+    border-bottom: 1px solid ds.$hex-gray-light
+
+  .container
+    display: flex
+    justify-content: space-between
+    align-items: center
+    padding-top: ds.rem(23)
+    padding-bottom: ds.rem(23)
+
+    .group
+      display: flex
+      align-items: center
+      gap: ds.rem(23)
+
+      @include ds.mq(minSmall)
+        align-items: flex-end
+
+      h1, h1 a
+        display: flex
+        height: ds.rem(32)
+
+      ol
+        display: flex
+
+        @include ds.mq(minSmall)
+          align-items: center
+
+        @include ds.mq(maxExtraSmall)
+          flex-direction: column-reverse
+
+        li
+          @include ds.mq(minSmall)
+            &:first-of-type
+              display: flex
+              align-items: center
+
+              &::after
+                content: '|'
+                @include ds.fw(500)
+                font-size: ds.rem(12)
+                color: rgba(ds.$hex-gray-light, .5)
+
+                body[data-theme='dark'] &
+                  color: rgba(ds.$hex-gray-dark, .5)
+
+          &.current
+            a
+              span
+                color: ds.$hex-accent
+                border-bottom-color: ds.$hex-accent
+
+                body[data-theme='dark'] &
+                  color: ds.$hex-accent
+                  border-bottom-color: ds.$hex-accent
+
+          a
+            display: flex
+            align-items: center
+            gap: ds.rem(3)
+            padding: ds.rem(3) 0
+            @include ds.fw(500)
+            font-size: ds.rem(14)
+
+            @include ds.mq(minSmall)
+              padding: 0 ds.rem(7)
+
+            svg
+              width: ds.rem(14)
+              height: ds.rem(14)
+
+              path
+                fill: ds.$hex-accent
+
+            span
+              border-bottom-width: ds.rem(2)
+              border-bottom-style: solid
+              border-bottom-color: transparent
+              color: ds.$hex-dark
+              transition: all .4s cubic-bezier(.4,0,.2,1)
+
+            &:hover, &:focus-visible
+              span
+                border-bottom-color: ds.$hex-accent
+                color: ds.$hex-accent
+
+            body[data-theme='dark'] &
+              svg
+                path
+                  fill: ds.$hex-accent
+
+              span
+                color: ds.$hex-white
+
+              &:hover, &:focus-visible
+                span
+                  color: ds.$hex-accent
+                  border-bottom-color: ds.$hex-accent
+
+    svg
+      & + span:not(.link)
+        @include ds.screen-reader-only
+
+    button
+      transition: all .4s cubic-bezier(.4,0,.2,1)
+      background-color: rgba(ds.$hex-gray-light, .1)
+      display: flex
+      justify-content: center
+      align-items: center
+      border-radius: 100%
+      width: ds.rem(32)
+      height: ds.rem(32)
+
+      body[data-theme='dark'] &
+        background-color: rgba(ds.$hex-gray-dark, .2)
+
+      &:hover, &:focus-visible
+        background-color: rgba(ds.$hex-dark, 1)
+
+        svg
+          path
+            fill: ds.$hex-accent
+
+        body[data-theme='dark'] &
+          background-color: rgba(ds.$hex-light, 1)
+
+          svg
+            path
+              fill: ds.$hex-accent
+
+      svg
+        display: inline-block
+        width: ds.rem(20)
+        height: ds.rem(20)
