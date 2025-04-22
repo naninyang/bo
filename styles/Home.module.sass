@@ -86,7 +86,7 @@ section.section
       border-radius: ds.rem(17)
 
       body[data-theme='dark'] &
-        border: ds.rem(2) solid ds.$hex-black
+        border: ds.rem(2) solid ds.$hex-gray-light
 
     > h2
       font-size: ds.rem(20)
@@ -122,7 +122,7 @@ section.section
       height: ds.rem(37)
       font-size: ds.rem(18)
 
-    select, input[type='number'], input[type='text'], input[type='password']
+    select, input[type='number'], input[type='text'], input[type='password'], input:-webkit-autofill
       appearance: none
       background-color: transparent
       border: 0
@@ -130,11 +130,20 @@ section.section
       border-radius: 0
       padding: 0
       transition: all .4s cubic-bezier(.4,0,.2,1)
+      -webkit-text-fill-color: black!important
 
       &:focus, &:focus-visible
         outline: 0
         border-bottom: ds.rem(5) solid ds.$hex-accent
         color: ds.$hex-accent
+        box-shadow: 0 0 0px 1000px white inset!important
+
+      body[data-theme='dark'] &
+        -webkit-text-fill-color: white!important
+        box-shadow: 0 0 0px 1000px black inset!important
+
+        &:focus, &:focus-visible
+          -webkit-text-fill-color: ds.$hex-accent!important
 
     .value
       @include ds.col
