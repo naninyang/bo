@@ -1,0 +1,20 @@
+{
+  "name": "하나의 JSON으로 모든 테이블을 보자 - 일트보자 1tboja",
+  "short_name": "1tboja",
+  "icons": [
+    {
+      "src": "/favicon/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "theme_color": "#010409",
+  "background_color": "#010409",
+  "start_url": "https://bo.dev1stud.io",
+  "display": "standalone"
+}
