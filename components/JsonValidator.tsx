@@ -81,8 +81,9 @@ export default function JsonValidator({ onValidData }: Props) {
       }
 
       onValidData(json, 'success');
-    } catch (err) {
+    } catch (error) {
       setError('API 엔드포인트가 JSON이 아니거나 JSON 코드에 문제가 있습니다. 확인하세요.');
+      console.error(error);
       onValidData(null, 'error');
     }
   };
