@@ -1,11 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { Client as NotionClient } from '@notionhq/client';
-import {
-  QueryDatabaseResponse,
-  PageObjectResponse,
-  SelectPropertyItemObjectResponse,
-  RichTextItemResponse,
-} from '@notionhq/client/build/src/api-endpoints';
+import { QueryDatabaseResponse, PageObjectResponse } from '@notionhq/client/build/src/api-endpoints';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   const { url, secret, databaseId } = req.query;
