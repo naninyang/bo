@@ -113,7 +113,7 @@ section.section
       display: flex
       align-items: center
       border-bottom: ds.rem(2) solid transparent
-      width: ds.rem(92)
+      width: ds.rem(117)
 
     select
       cursor: pointer
@@ -132,6 +132,9 @@ section.section
       padding: 0
       transition: all .4s cubic-bezier(.4,0,.2,1)
       -webkit-text-fill-color: black!important
+
+      &:disabled
+        opacity: .2
 
       &:focus, &:focus-visible
         outline: 0

@@ -1,4 +1,4 @@
-import { useState, FormEvent } from 'react';
+import { useState, FormEvent, useEffect } from 'react';
 import { FlatJsonObject } from '@/types';
 import RippleButton from './RippleButton';
 import styles from '@/styles/Home.module.sass';
@@ -7,19 +7,37 @@ type Props = {
   onValidData: (data: FlatJsonObject[] | null, status: 'loading' | 'success' | 'error') => void;
 };
 
-type AuthType = 'none' | 'basic' | 'bearer' | 'apikey';
+type AuthType = 'none' | 'basic' | 'bearer' | 'apikey' | 'notion';
 
 export default function JsonValidator({ onValidData }: Props) {
-  const [url, setUrl] = useState('');
-  const [error, setError] = useState('');
   const [authType, setAuthType] = useState<AuthType>('none');
 
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [token, setToken] = useState('');
-  const [apiKey, setApiKey] = useState('');
-  const [apiValue, setApiValue] = useState('');
+  const [apiUrl, setApiUrl] = useState('');
+  const [apiUrlPlaceholder, setApiUrlPlaceholder] = useState('http:// 또는 https:// 로 시작하는 API 엔드포인트 주소');
+  const [apiUrlDisabled, setApiUrlDisabled] = useState(false);
+
+  const [basicUsername, setBasicUsername] = useState('');
+  const [basicPassword, setBasicPassword] = useState('');
+  const [bearerToken, setBearerToken] = useState('');
+  const [apiKeyName, setApiKeyName] = useState('');
+  const [apiKeyValue, setApiKeyValue] = useState('');
   const [apiAddTo, setApiAddTo] = useState<'header' | 'query'>('header');
+
+  const [notionSecret, setNotionSecret] = useState('');
+  const [notionDbId, setNotionDbId] = useState('');
+
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (authType === 'notion') {
+      setApiUrl('');
+      setApiUrlDisabled(true);
+      setApiUrlPlaceholder('Notion Database가 선택됨');
+    } else {
+      setApiUrlDisabled(false);
+      setApiUrlPlaceholder('http:// 또는 https:// 로 시작하는 API 엔드포인트 주소');
+    }
+  }, [authType]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -29,25 +47,29 @@ export default function JsonValidator({ onValidData }: Props) {
     try {
       const headers: HeadersInit = {
         ...(authType === 'basic' && {
-          Authorization: `Basic ${btoa(`${username}:${password}`)}`,
+          Authorization: `Basic ${btoa(`${basicUsername}:${basicPassword}`)}`,
         }),
         ...(authType === 'bearer' && {
-          Authorization: `Bearer ${token}`,
+          Authorization: `Bearer ${bearerToken}`,
         }),
         ...(authType === 'apikey' &&
           apiAddTo === 'header' && {
-            [apiKey]: apiValue,
+            [apiKeyName]: apiKeyValue,
           }),
       };
 
-      const fetchUrl =
-        authType === 'apikey' && apiAddTo === 'query'
-          ? `${url}${url.includes('?') ? '&' : '?'}${encodeURIComponent(apiKey)}=${encodeURIComponent(apiValue)}`
-          : url;
+      const isNotion = authType === 'notion';
 
-      const response = await fetch(`/api/proxy?url=${encodeURIComponent(fetchUrl)}`, {
-        headers,
-      });
+      const urlWithQuery =
+        authType === 'apikey' && apiAddTo === 'query'
+          ? `${apiUrl}${apiUrl.includes('?') ? '&' : '?'}${encodeURIComponent(apiKeyName)}=${encodeURIComponent(apiKeyValue)}`
+          : apiUrl;
+
+      const proxyUrl = isNotion
+        ? `/api/proxy?url=notion&secret=${encodeURIComponent(notionSecret)}&databaseId=${encodeURIComponent(notionDbId)}`
+        : `/api/proxy?url=${encodeURIComponent(urlWithQuery)}`;
+
+      const response = await fetch(proxyUrl, { headers });
 
       if (!response.ok) {
         setError('API 엔드포인트가 존재하지 않거나 접근이 거부되었습니다.');
@@ -81,9 +103,9 @@ export default function JsonValidator({ onValidData }: Props) {
       }
 
       onValidData(json, 'success');
-    } catch (error) {
+    } catch (err) {
       setError('API 엔드포인트가 JSON이 아니거나 JSON 코드에 문제가 있습니다. 확인하세요.');
-      console.error(error);
+      console.error(err);
       onValidData(null, 'error');
     }
   };
@@ -101,9 +123,10 @@ export default function JsonValidator({ onValidData }: Props) {
                 <input
                   id="api-url"
                   type="text"
-                  value={url}
-                  onChange={(e) => setUrl(e.target.value)}
-                  placeholder="http:// 또는 https:// 로 시작하는 API 엔드포인트 주소"
+                  value={apiUrl}
+                  onChange={(e) => setApiUrl(e.target.value)}
+                  placeholder={apiUrlPlaceholder}
+                  disabled={apiUrlDisabled}
                   required
                 />
               </div>
@@ -116,6 +139,7 @@ export default function JsonValidator({ onValidData }: Props) {
                   <option value="basic">Basic Auth</option>
                   <option value="bearer">Bearer Token</option>
                   <option value="apikey">API Key</option>
+                  <option value="notion">Notion Database API</option>
                 </select>
               </div>
             </div>
@@ -124,7 +148,12 @@ export default function JsonValidator({ onValidData }: Props) {
                 <div className={styles.group}>
                   <label htmlFor="username">Username</label>
                   <div className={styles.value}>
-                    <input id="username" type="text" value={username} onChange={(e) => setUsername(e.target.value)} />
+                    <input
+                      id="username"
+                      type="text"
+                      value={basicUsername}
+                      onChange={(e) => setBasicUsername(e.target.value)}
+                    />
                   </div>
                 </div>
                 <div className={styles.group}>
@@ -133,8 +162,8 @@ export default function JsonValidator({ onValidData }: Props) {
                     <input
                       id="password"
                       type="password"
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
+                      value={basicPassword}
+                      onChange={(e) => setBasicPassword(e.target.value)}
                     />
                   </div>
                 </div>
@@ -144,7 +173,7 @@ export default function JsonValidator({ onValidData }: Props) {
               <div className={styles.group}>
                 <label htmlFor="token">Token</label>
                 <div className={styles.value}>
-                  <input id="token" type="text" value={token} onChange={(e) => setToken(e.target.value)} />
+                  <input id="token" type="text" value={bearerToken} onChange={(e) => setBearerToken(e.target.value)} />
                 </div>
               </div>
             )}
@@ -153,13 +182,23 @@ export default function JsonValidator({ onValidData }: Props) {
                 <div className={styles.group}>
                   <label htmlFor="api-key">Key</label>
                   <div className={styles.value}>
-                    <input id="api-key" type="text" value={apiKey} onChange={(e) => setApiKey(e.target.value)} />
+                    <input
+                      id="api-key"
+                      type="text"
+                      value={apiKeyName}
+                      onChange={(e) => setApiKeyName(e.target.value)}
+                    />
                   </div>
                 </div>
                 <div className={styles.group}>
                   <label htmlFor="api-value">Value</label>
                   <div className={styles.value}>
-                    <input id="api-value" type="text" value={apiValue} onChange={(e) => setApiValue(e.target.value)} />
+                    <input
+                      id="api-value"
+                      type="text"
+                      value={apiKeyValue}
+                      onChange={(e) => setApiKeyValue(e.target.value)}
+                    />
                   </div>
                 </div>
                 <div className={styles.group}>
@@ -173,6 +212,32 @@ export default function JsonValidator({ onValidData }: Props) {
                       <option value="header">Header</option>
                       <option value="query">Query Params</option>
                     </select>
+                  </div>
+                </div>
+              </div>
+            )}
+            {authType === 'notion' && (
+              <div className={styles.groups}>
+                <div className={styles.group}>
+                  <label htmlFor="notion-token">Secret Token</label>
+                  <div className={styles.value}>
+                    <input
+                      id="notion-token"
+                      type="text"
+                      value={notionSecret}
+                      onChange={(e) => setNotionSecret(e.target.value)}
+                    />
+                  </div>
+                </div>
+                <div className={styles.group}>
+                  <label htmlFor="notion-db">Database ID</label>
+                  <div className={styles.value}>
+                    <input
+                      id="notion-db"
+                      type="text"
+                      value={notionDbId}
+                      onChange={(e) => setNotionDbId(e.target.value)}
+                    />
                   </div>
                 </div>
               </div>
