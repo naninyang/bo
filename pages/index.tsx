@@ -3,15 +3,24 @@ import { FlatJsonObject, FlatJsonStatus } from '@/types';
 import Seo from '@/components/Seo';
 import JsonValidator from '@/components/JsonValidator';
 import TableView from '@/components/TableView';
+import ChartPreparation from '@/components/ChartPreparation';
+import ChartView from '@/components/ChartView';
 import styles from '@/styles/Home.module.sass';
 
 export default function Home() {
   const [jsonData, setJsonData] = useState<FlatJsonObject[] | null>(null);
   const [status, setStatus] = useState<FlatJsonStatus>(null);
 
+  const [chartParams, setChartParams] = useState<{
+    xKey: string;
+    yKey: string;
+    labelKey: string;
+  } | null>(null);
+
   const handleValidData = (data: FlatJsonObject[] | null, status: FlatJsonStatus) => {
     setJsonData(data);
     setStatus(status);
+    setChartParams(null);
   };
 
   const timestamp = Date.now();
@@ -24,16 +33,11 @@ export default function Home() {
       />
       <div className={styles.container}>
         <ul className={styles.announcement}>
-          <li>
-            현재는 <strong>테이블뷰</strong>만 지원합니다.
-          </li>
-          <li>
-            <strong>차트뷰</strong>는 개발 중입니다!
-          </li>
+          <li>엔드포인트 정보를 입력하신 뒤 차트 생성하기 사전작업 정보를 입력하시면 차트를 보실 수 있어요.</li>
+          <li>Notion Database API를 사용하실 수 있습니다.</li>
           <li>
             JSON 속성명(field name) 및 속성값(field value)은 <strong>Raw Text 형태</strong>로 표시됩니다.
           </li>
-          <li>Notion Database API를 사용하실 수 있습니다.</li>
           <li>입력하신 엔드포인트 정보는 서버에 저장되지 않습니다.</li>
           <li>일트보자 웹서비스는 데이터베이스와 관련된 일체의 서버를 운용하지 않습니다.</li>
           <li className={styles.warning}>
@@ -48,7 +52,15 @@ export default function Home() {
             <strong>귀신보다 사람이 더 무섭습니다.</strong>
           </li>
         </ul>
-        <JsonValidator onValidData={handleValidData} />
+        <div className={styles.form}>
+          <JsonValidator onValidData={handleValidData} />
+          {status === 'success' && jsonData && (
+            <ChartPreparation
+              data={jsonData}
+              onSubmit={(xKey, yKey, labelKey) => setChartParams({ xKey, yKey, labelKey })}
+            />
+          )}
+        </div>
         {status === 'loading' && (
           <section className={styles.section}>
             <div className={styles.module}>
@@ -63,7 +75,12 @@ export default function Home() {
             </div>
           </section>
         )}
-        {status === 'success' && jsonData && <TableView data={jsonData} />}
+        {status === 'success' && jsonData && (
+          <>
+            <TableView data={jsonData} />
+            {chartParams && <ChartView data={jsonData} {...chartParams} />}
+          </>
+        )}
       </div>
     </main>
   );

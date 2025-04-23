@@ -51,6 +51,17 @@
       .warning
         color: ds.$hex-danger
 
+    .form, .charts
+      display: flex
+      width: 100%
+
+      @include ds.mq(maxSmall)
+        flex-direction: column
+
+      @include ds.mq(minMedium)
+        section
+          width: 50%
+
 section.section
   display: flex
   flex-direction: column
@@ -190,9 +201,10 @@ section.section
         color: ds.$hex-accent
 
   .table
-    overflow-x: auto
+    overflow: auto
     -webkit-overflow-scrolling: touch
     width: 100%
+    height: ds.rem(270)
     margin-bottom: 1rem
     vertical-align: top
     border-color: var(--bs-table-border-color)
