@@ -129,16 +129,14 @@ section.section
     display: flex
     flex-direction: column
     gap: ds.rem(5)
+    width: 100%
 
     .group
       display: flex
       align-items: center
       gap: ds.rem(5)
 
-      input, select
-        @include ds.col
-
-    label
+    label, span
       display: flex
       align-items: center
       border-bottom: ds.rem(2) solid transparent
@@ -147,13 +145,14 @@ section.section
     select
       cursor: pointer
 
-    select, input[type='number'], input[type='text'], label
+    select, input[type='number'], input[type='text'], label, span
       height: ds.rem(37)
       font-size: ds.rem(18)
 
-    select, input[type='number'], input[type='text'], input[type='password'], input:-webkit-autofill
+    select, input[type='number'], input[type='text'], input[type='password'], input:-webkit-autofill, textarea
       appearance: none
       background-color: transparent
+      width: 100%
       box-shadow: 0 0 0px 1000px white inset!important
       border: 0
       border-bottom: 1px solid ds.$hex-gray-light
@@ -187,6 +186,8 @@ section.section
       textarea
         height: ds.rem(270)
         resize: none
+        font-family: monospace
+        font-size: ds.rem(14)
 
     .groups
       display: flex
@@ -203,6 +204,65 @@ section.section
 
           &:nth-of-type(3)
             width: 100%
+
+    .checkboxes
+      display: flex
+      gap: ds.rem(12)
+      @include ds.col
+
+      .checkbox
+        display: flex
+        @include ds.col
+        align-items: center
+        position: relative
+        height: ds.rem(37)
+
+        > div
+          display: flex
+          justify-content: center
+          align-items: center
+          width: ds.rem(24)
+          height: ds.rem(24)
+          background-color: ds.$hex-white
+          position: absolute
+          top: 50%
+          left: 0
+          transform: translateY(-50%)
+          border-radius: ds.rem(14)
+
+          body[data-theme='dark'] &
+            background-color: ds.$hex-dark
+
+          &.checked
+            svg
+              path
+                fill: ds.$hex-accent
+
+                body[data-theme='dark'] &
+                  fill: ds.$hex-accent
+
+          &.unchecked
+            svg
+              path
+                fill: rgba(ds.$hex-dark, .7)
+
+                body[data-theme='dark'] &
+                  fill: rgba(ds.$hex-light, .7)
+
+        input
+          @include ds.hidden-box
+          width: ds.rem(24)
+          height: ds.rem(24)
+
+        label
+          position: relative
+          display: inline-block
+          height: auto
+          width: auto
+          padding-left: ds.rem(27)
+          font-size: ds.rem(16)
+          font-weight: 700
+          white-space: nowrap
 
     > p
       color: ds.$hex-danger

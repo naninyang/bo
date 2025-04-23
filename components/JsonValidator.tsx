@@ -3,6 +3,7 @@ import { get } from 'lodash';
 import { FlatJsonObject, FlatJsonStatus } from '@/types';
 import RippleButton from './RippleButton';
 import styles from '@/styles/Home.module.sass';
+import { Checked, Unchecked } from './Svgs';
 
 type Props = {
   onValidData: (data: FlatJsonObject[] | null, status: FlatJsonStatus) => void;
@@ -44,7 +45,7 @@ export default function JsonValidator({ onValidData }: Props) {
       setApiUrlPlaceholder('Notion Database API가 선택됨');
     } else {
       setApiUrlDisabled(false);
-      setApiUrlPlaceholder('http:// 또는 https:// 로 시작하는 API 엔드포인트 주소');
+      setApiUrlPlaceholder('API 엔드포인트 주소');
     }
   }, [authType]);
 
@@ -112,7 +113,7 @@ export default function JsonValidator({ onValidData }: Props) {
       onValidData(data, 'success');
     } catch (event) {
       console.error('파싱 오류:', event);
-      setError('JSON으로 파싱에 실패했습니다');
+      setError('JSON으로 파싱에 실패했습니다 (줄바꿈이 셀 내부에 들어간 경우, 불완전한 인코딩 등)');
       onValidData(null, 'error');
     }
   };
@@ -230,38 +231,68 @@ export default function JsonValidator({ onValidData }: Props) {
           <fieldset>
             <legend>엔드포인트 정보 입력폼</legend>
             <div className={styles.group}>
-              <label htmlFor="json-url">URL</label>
-              <div className={styles.value}>
-                <input
-                  id="json-url"
-                  type="radio"
-                  name="inputType"
-                  value="url"
-                  checked={inputType === 'url'}
-                  onChange={() => setInputType('url')}
-                />
-              </div>
-              <label htmlFor="json-tsv">TSV</label>
-              <div className={styles.value}>
-                <input
-                  id="json-tsv"
-                  type="radio"
-                  name="inputType"
-                  value="tsv"
-                  checked={inputType === 'tsv'}
-                  onChange={() => setInputType('tsv')}
-                />
-              </div>
-              <label htmlFor="json-csv">CSV</label>
-              <div className={styles.value}>
-                <input
-                  id="json-csv"
-                  type="radio"
-                  name="inputType"
-                  value="csv"
-                  checked={inputType === 'csv'}
-                  onChange={() => setInputType('csv')}
-                />
+              <span>JSON 입력</span>
+              <div className={styles.checkboxes}>
+                <div className={styles.checkbox}>
+                  <input
+                    id="json-url"
+                    type="radio"
+                    name="inputType"
+                    value="url"
+                    checked={inputType === 'url'}
+                    onChange={() => setInputType('url')}
+                  />
+                  {inputType === 'url' ? (
+                    <div className={styles.checked}>
+                      <Checked />
+                    </div>
+                  ) : (
+                    <div className={styles.unchecked}>
+                      <Unchecked />
+                    </div>
+                  )}
+                  <label htmlFor="json-url">URL</label>
+                </div>
+                <div className={styles.checkbox}>
+                  <input
+                    id="json-tsv"
+                    type="radio"
+                    name="inputType"
+                    value="tsv"
+                    checked={inputType === 'tsv'}
+                    onChange={() => setInputType('tsv')}
+                  />
+                  {inputType === 'tsv' ? (
+                    <div className={styles.checked}>
+                      <Checked />
+                    </div>
+                  ) : (
+                    <div className={styles.unchecked}>
+                      <Unchecked />
+                    </div>
+                  )}
+                  <label htmlFor="json-tsv">TSV</label>
+                </div>
+                <div className={styles.checkbox}>
+                  <input
+                    id="json-csv"
+                    type="radio"
+                    name="inputType"
+                    value="csv"
+                    checked={inputType === 'csv'}
+                    onChange={() => setInputType('csv')}
+                  />
+                  {inputType === 'csv' ? (
+                    <div className={styles.checked}>
+                      <Checked />
+                    </div>
+                  ) : (
+                    <div className={styles.unchecked}>
+                      <Unchecked />
+                    </div>
+                  )}
+                  <label htmlFor="json-csv">CSV</label>
+                </div>
               </div>
             </div>
             {inputType === 'url' && (
@@ -438,7 +469,7 @@ export default function JsonValidator({ onValidData }: Props) {
                     id="tsv-text"
                     value={tsvText}
                     onChange={(event) => setTsvText(event.target.value)}
-                    placeholder="여기에 TSV 데이터를 붙여넣으세요"
+                    placeholder="엑셀/스프레드시트의 셀 복붙"
                     rows={10}
                   />
                 </div>
@@ -452,7 +483,7 @@ export default function JsonValidator({ onValidData }: Props) {
                     id="csv-text"
                     value={csvText}
                     onChange={(event) => setCsvText(event.target.value)}
-                    placeholder="여기에 CSV 데이터를 붙여넣으세요"
+                    placeholder="CSV 데이터 복붙"
                     rows={10}
                   />
                 </div>
