@@ -58,6 +58,24 @@
       @include ds.mq(maxSmall)
         flex-direction: column
 
+    .form
+      display: flex
+      width: 100%
+
+      @include ds.mq(maxSmall)
+        flex-direction: column
+
+      @include ds.mq(minMedium)
+        section
+          @include ds.col
+
+    .charts
+      display: flex
+      width: 100%
+
+      @include ds.mq(maxSmall)
+        flex-direction: column
+
       @include ds.mq(minMedium)
         section
           width: 50%
