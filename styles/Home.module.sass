@@ -181,8 +181,12 @@ section.section
     .value
       @include ds.col
 
-      input, select
+      input, select, textarea
         width: 100%
+
+      textarea
+        height: ds.rem(270)
+        resize: none
 
     .groups
       display: flex

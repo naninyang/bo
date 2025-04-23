@@ -13,6 +13,11 @@ type AuthType = 'none' | 'basic' | 'bearer' | 'apikey' | 'notion';
 export default function JsonValidator({ onValidData }: Props) {
   const [authType, setAuthType] = useState<AuthType>('none');
 
+  const [inputType, setInputType] = useState<'url' | 'tsv' | 'csv'>('url');
+
+  const [tsvText, setTsvText] = useState('');
+  const [csvText, setCsvText] = useState('');
+
   const [apiUrl, setApiUrl] = useState('');
   const [apiUrlPlaceholder, setApiUrlPlaceholder] = useState('http:// 또는 https:// 로 시작하는 API 엔드포인트 주소');
   const [apiUrlDisabled, setApiUrlDisabled] = useState(false);
@@ -43,12 +48,91 @@ export default function JsonValidator({ onValidData }: Props) {
     }
   }, [authType]);
 
+  const handleDelimitedSubmit = (text: string, delimiter: string) => {
+    try {
+      const parseValue = (value: string): string | number | boolean => {
+        if (/^-?\d+(\.\d+)?$/.test(value)) return Number(value);
+        if (value.toLowerCase() === 'true') return true;
+        if (value.toLowerCase() === 'false') return false;
+        return value;
+      };
+
+      const lines = text.trim().split(/\r?\n/);
+      const headers = lines[0].split(delimiter);
+
+      const data: FlatJsonObject[] = lines.slice(1).map((line, i) => {
+        const cells = line.split(delimiter);
+        if (cells.length !== headers.length) throw new Error(`Row ${i + 2} has mismatched cells`);
+
+        const row: FlatJsonObject = {};
+        headers.forEach((header, index) => {
+          row[header] = parseValue(cells[index]);
+        });
+        return row;
+      });
+
+      onValidData(data, 'success');
+    } catch (event) {
+      console.error('파싱 오류:', event);
+      setError('JSON으로 파싱에 실패했습니다');
+      onValidData(null, 'error');
+    }
+  };
+
+  const handleTsvSubmit = () => {
+    try {
+      const parseValue = (value: string): string | number | boolean => {
+        if (/^-?\d+(\.\d+)?$/.test(value)) return Number(value);
+        if (value.toLowerCase() === 'true') return true;
+        if (value.toLowerCase() === 'false') return false;
+        return value;
+      };
+
+      const lines = tsvText.trim().split(/\r?\n/);
+      const headers = lines[0].split('\t');
+
+      const data: FlatJsonObject[] = lines.slice(1).map((line, i) => {
+        const cells = line.split('\t');
+
+        if (cells.length !== headers.length) {
+          console.warn(`셀 수 불일치: ${cells.length} vs ${headers.length}`);
+          throw new Error(`Row ${i + 2} has mismatched cells`);
+        }
+
+        const row: FlatJsonObject = {};
+        headers.forEach((header, index) => {
+          const raw = cells[index];
+          const parsed = parseValue(raw);
+          row[header] = parsed;
+        });
+
+        return row;
+      });
+
+      onValidData(data, 'success');
+    } catch (event) {
+      console.error('파싱 오류:', event);
+      setError('JSON으로 파싱에 실패했습니다');
+      onValidData(null, 'error');
+    }
+  };
+
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     setError('');
     onValidData(null, 'loading');
     setIsJsonValid(false);
     setJsonRaw(null);
+
+    if (inputType === 'tsv') {
+      handleTsvSubmit();
+      return;
+    }
+
+    if (inputType === 'csv') {
+      handleDelimitedSubmit(csvText, ',');
+      return;
+    }
 
     try {
       const headers: HeadersInit = {
@@ -146,163 +230,230 @@ export default function JsonValidator({ onValidData }: Props) {
           <fieldset>
             <legend>엔드포인트 정보 입력폼</legend>
             <div className={styles.group}>
-              <label htmlFor="api-url">API URL</label>
+              <label htmlFor="json-url">URL</label>
               <div className={styles.value}>
                 <input
-                  id="api-url"
-                  type="text"
-                  value={apiUrl}
-                  onChange={(event) => {
-                    const newValue = event.target.value;
-                    setApiUrl(newValue);
-                    setBasicUsername('');
-                    setBasicPassword('');
-                    setBearerToken('');
-                    setApiKeyName('');
-                    setApiKeyValue('');
-                    setNotionSecret('');
-                    setNotionDbId('');
-                    setJsonPath('');
-                    setIsJsonValid(false);
-                    onValidData(null, null);
-                  }}
-                  placeholder={apiUrlPlaceholder}
-                  disabled={apiUrlDisabled}
-                  required
+                  id="json-url"
+                  type="radio"
+                  name="inputType"
+                  value="url"
+                  checked={inputType === 'url'}
+                  onChange={() => setInputType('url')}
+                />
+              </div>
+              <label htmlFor="json-tsv">TSV</label>
+              <div className={styles.value}>
+                <input
+                  id="json-tsv"
+                  type="radio"
+                  name="inputType"
+                  value="tsv"
+                  checked={inputType === 'tsv'}
+                  onChange={() => setInputType('tsv')}
+                />
+              </div>
+              <label htmlFor="json-csv">CSV</label>
+              <div className={styles.value}>
+                <input
+                  id="json-csv"
+                  type="radio"
+                  name="inputType"
+                  value="csv"
+                  checked={inputType === 'csv'}
+                  onChange={() => setInputType('csv')}
                 />
               </div>
             </div>
-            <div className={styles.group}>
-              <label htmlFor="auth-type">Auth Type</label>
-              <div className={styles.value}>
-                <select
-                  id="auth-type"
-                  value={authType}
-                  onChange={(event) => setAuthType(event.target.value as AuthType)}
-                >
-                  <option value="none">No Auth</option>
-                  <option value="basic">Basic Auth</option>
-                  <option value="bearer">Bearer Token</option>
-                  <option value="apikey">API Key</option>
-                  <option value="notion">Notion Database API</option>
-                </select>
-              </div>
-            </div>
-            {authType === 'basic' && (
-              <div className={styles.groups}>
+            {inputType === 'url' && (
+              <>
                 <div className={styles.group}>
-                  <label htmlFor="username">Username</label>
+                  <label htmlFor="api-url">API URL</label>
                   <div className={styles.value}>
                     <input
-                      id="username"
+                      id="api-url"
                       type="text"
-                      value={basicUsername}
-                      onChange={(event) => setBasicUsername(event.target.value)}
+                      value={apiUrl}
+                      onChange={(event) => {
+                        const newValue = event.target.value;
+                        setApiUrl(newValue);
+                        setBasicUsername('');
+                        setBasicPassword('');
+                        setBearerToken('');
+                        setApiKeyName('');
+                        setApiKeyValue('');
+                        setNotionSecret('');
+                        setNotionDbId('');
+                        setJsonPath('');
+                        setIsJsonValid(false);
+                        onValidData(null, null);
+                      }}
+                      placeholder={apiUrlPlaceholder}
+                      disabled={apiUrlDisabled}
+                      required
                     />
                   </div>
                 </div>
                 <div className={styles.group}>
-                  <label htmlFor="password">Password</label>
+                  <label htmlFor="auth-type">Auth Type</label>
                   <div className={styles.value}>
-                    <input
-                      id="password"
-                      type="password"
-                      value={basicPassword}
-                      onChange={(event) => setBasicPassword(event.target.value)}
-                    />
+                    <select
+                      id="auth-type"
+                      value={authType}
+                      onChange={(event) => setAuthType(event.target.value as AuthType)}
+                    >
+                      <option value="none">No Auth</option>
+                      <option value="basic">Basic Auth</option>
+                      <option value="bearer">Bearer Token</option>
+                      <option value="apikey">API Key</option>
+                      <option value="notion">Notion Database API</option>
+                    </select>
                   </div>
                 </div>
-              </div>
+                {authType === 'basic' && (
+                  <div className={styles.groups}>
+                    <div className={styles.group}>
+                      <label htmlFor="username">Username</label>
+                      <div className={styles.value}>
+                        <input
+                          id="username"
+                          type="text"
+                          value={basicUsername}
+                          onChange={(event) => setBasicUsername(event.target.value)}
+                        />
+                      </div>
+                    </div>
+                    <div className={styles.group}>
+                      <label htmlFor="password">Password</label>
+                      <div className={styles.value}>
+                        <input
+                          id="password"
+                          type="password"
+                          value={basicPassword}
+                          onChange={(event) => setBasicPassword(event.target.value)}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+                {authType === 'bearer' && (
+                  <div className={styles.group}>
+                    <label htmlFor="token">Token</label>
+                    <div className={styles.value}>
+                      <input
+                        id="token"
+                        type="text"
+                        value={bearerToken}
+                        onChange={(event) => setBearerToken(event.target.value)}
+                      />
+                    </div>
+                  </div>
+                )}
+                {authType === 'apikey' && (
+                  <div className={styles.groups}>
+                    <div className={styles.group}>
+                      <label htmlFor="api-key">Key</label>
+                      <div className={styles.value}>
+                        <input
+                          id="api-key"
+                          type="text"
+                          value={apiKeyName}
+                          onChange={(event) => setApiKeyName(event.target.value)}
+                        />
+                      </div>
+                    </div>
+                    <div className={styles.group}>
+                      <label htmlFor="api-value">Value</label>
+                      <div className={styles.value}>
+                        <input
+                          id="api-value"
+                          type="text"
+                          value={apiKeyValue}
+                          onChange={(event) => setApiKeyValue(event.target.value)}
+                        />
+                      </div>
+                    </div>
+                    <div className={styles.group}>
+                      <label htmlFor="api-add-to">Add to</label>
+                      <div className={styles.value}>
+                        <select
+                          id="api-add-to"
+                          value={apiAddTo}
+                          onChange={(event) => setApiAddTo(event.target.value as 'header' | 'query')}
+                        >
+                          <option value="header">Header</option>
+                          <option value="query">Query Params</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                )}
+                {authType === 'notion' && (
+                  <div className={styles.groups}>
+                    <div className={styles.group}>
+                      <label htmlFor="notion-token">Secret Token</label>
+                      <div className={styles.value}>
+                        <input
+                          id="notion-token"
+                          type="text"
+                          value={notionSecret}
+                          onChange={(event) => setNotionSecret(event.target.value)}
+                        />
+                      </div>
+                    </div>
+                    <div className={styles.group}>
+                      <label htmlFor="notion-db">Database ID</label>
+                      <div className={styles.value}>
+                        <input
+                          id="notion-db"
+                          type="text"
+                          value={notionDbId}
+                          onChange={(event) => setNotionDbId(event.target.value)}
+                        />
+                      </div>
+                    </div>
+                  </div>
+                )}
+                {isJsonValid && (
+                  <div className={styles.group}>
+                    <label htmlFor="json-path">배열 경로</label>
+                    <div className={styles.value}>
+                      <input
+                        id="json-path"
+                        type="text"
+                        value={jsonPath}
+                        onChange={(event) => setJsonPath(event.target.value)}
+                        required={!Array.isArray(jsonRaw)}
+                        placeholder={Array.isArray(jsonRaw) ? '옵션' : '필수입력'}
+                      />
+                    </div>
+                  </div>
+                )}
+              </>
             )}
-            {authType === 'bearer' && (
+            {inputType === 'tsv' && (
               <div className={styles.group}>
-                <label htmlFor="token">Token</label>
+                <label htmlFor="tsv-text">TSV 데이터</label>
                 <div className={styles.value}>
-                  <input
-                    id="token"
-                    type="text"
-                    value={bearerToken}
-                    onChange={(event) => setBearerToken(event.target.value)}
+                  <textarea
+                    id="tsv-text"
+                    value={tsvText}
+                    onChange={(event) => setTsvText(event.target.value)}
+                    placeholder="여기에 TSV 데이터를 붙여넣으세요"
+                    rows={10}
                   />
                 </div>
               </div>
             )}
-            {authType === 'apikey' && (
-              <div className={styles.groups}>
-                <div className={styles.group}>
-                  <label htmlFor="api-key">Key</label>
-                  <div className={styles.value}>
-                    <input
-                      id="api-key"
-                      type="text"
-                      value={apiKeyName}
-                      onChange={(event) => setApiKeyName(event.target.value)}
-                    />
-                  </div>
-                </div>
-                <div className={styles.group}>
-                  <label htmlFor="api-value">Value</label>
-                  <div className={styles.value}>
-                    <input
-                      id="api-value"
-                      type="text"
-                      value={apiKeyValue}
-                      onChange={(event) => setApiKeyValue(event.target.value)}
-                    />
-                  </div>
-                </div>
-                <div className={styles.group}>
-                  <label htmlFor="api-add-to">Add to</label>
-                  <div className={styles.value}>
-                    <select
-                      id="api-add-to"
-                      value={apiAddTo}
-                      onChange={(event) => setApiAddTo(event.target.value as 'header' | 'query')}
-                    >
-                      <option value="header">Header</option>
-                      <option value="query">Query Params</option>
-                    </select>
-                  </div>
-                </div>
-              </div>
-            )}
-            {authType === 'notion' && (
-              <div className={styles.groups}>
-                <div className={styles.group}>
-                  <label htmlFor="notion-token">Secret Token</label>
-                  <div className={styles.value}>
-                    <input
-                      id="notion-token"
-                      type="text"
-                      value={notionSecret}
-                      onChange={(event) => setNotionSecret(event.target.value)}
-                    />
-                  </div>
-                </div>
-                <div className={styles.group}>
-                  <label htmlFor="notion-db">Database ID</label>
-                  <div className={styles.value}>
-                    <input
-                      id="notion-db"
-                      type="text"
-                      value={notionDbId}
-                      onChange={(event) => setNotionDbId(event.target.value)}
-                    />
-                  </div>
-                </div>
-              </div>
-            )}
-            {isJsonValid && (
+            {inputType === 'csv' && (
               <div className={styles.group}>
-                <label htmlFor="json-path">배열 경로</label>
+                <label htmlFor="csv-text">CSV 데이터</label>
                 <div className={styles.value}>
-                  <input
-                    id="json-path"
-                    type="text"
-                    value={jsonPath}
-                    onChange={(event) => setJsonPath(event.target.value)}
-                    required={!Array.isArray(jsonRaw)}
-                    placeholder={Array.isArray(jsonRaw) ? '옵션' : '필수입력'}
+                  <textarea
+                    id="csv-text"
+                    value={csvText}
+                    onChange={(event) => setCsvText(event.target.value)}
+                    placeholder="여기에 CSV 데이터를 붙여넣으세요"
+                    rows={10}
                   />
                 </div>
               </div>
