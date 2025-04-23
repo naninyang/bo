@@ -1,10 +1,11 @@
 import { useState, FormEvent, useEffect } from 'react';
-import { FlatJsonObject } from '@/types';
+import { get } from 'lodash';
+import { FlatJsonObject, FlatJsonStatus } from '@/types';
 import RippleButton from './RippleButton';
 import styles from '@/styles/Home.module.sass';
 
 type Props = {
-  onValidData: (data: FlatJsonObject[] | null, status: 'loading' | 'success' | 'error') => void;
+  onValidData: (data: FlatJsonObject[] | null, status: FlatJsonStatus) => void;
 };
 
 type AuthType = 'none' | 'basic' | 'bearer' | 'apikey' | 'notion';
@@ -26,23 +27,28 @@ export default function JsonValidator({ onValidData }: Props) {
   const [notionSecret, setNotionSecret] = useState('');
   const [notionDbId, setNotionDbId] = useState('');
 
+  const [jsonRaw, setJsonRaw] = useState<unknown>(null);
+  const [isJsonValid, setIsJsonValid] = useState(false);
+  const [jsonPath, setJsonPath] = useState('');
   const [error, setError] = useState('');
 
   useEffect(() => {
     if (authType === 'notion') {
       setApiUrl('');
       setApiUrlDisabled(true);
-      setApiUrlPlaceholder('Notion Database가 선택됨');
+      setApiUrlPlaceholder('Notion Database API가 선택됨');
     } else {
       setApiUrlDisabled(false);
       setApiUrlPlaceholder('http:// 또는 https:// 로 시작하는 API 엔드포인트 주소');
     }
   }, [authType]);
 
-  const handleSubmit = async (e: FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (event: FormEvent) => {
+    event.preventDefault();
     setError('');
     onValidData(null, 'loading');
+    setIsJsonValid(false);
+    setJsonRaw(null);
 
     try {
       const headers: HeadersInit = {
@@ -79,30 +85,52 @@ export default function JsonValidator({ onValidData }: Props) {
 
       const json = await response.json();
 
-      if (!Array.isArray(json)) {
-        setError('JSON 데이터는 배열 형태의 객체 집합이어야 합니다.');
+      if (typeof json !== 'object' || json === null) {
+        setError('JSON 구조가 올바르지 않습니다.');
         onValidData(null, 'error');
         return;
       }
 
-      const allKeys = new Set<string>();
-      for (const item of json) {
-        if (typeof item !== 'object' || item === null || Array.isArray(item)) {
-          setError('JSON 항목은 반드시 객체여야 합니다.');
+      setJsonRaw(json);
+      setIsJsonValid(true);
+
+      if (jsonPath.trim()) {
+        const target = get(json, jsonPath.trim());
+
+        if (!Array.isArray(target)) {
+          setError('입력한 경로에 해당하는 값이 배열이 아닙니다.');
           onValidData(null, 'error');
           return;
         }
-        Object.keys(item).forEach((key) => allKeys.add(key));
-      }
 
-      const hasInconsistentKeys = json.some((item) => [...allKeys].some((key) => !(key in item)));
-      if (hasInconsistentKeys) {
-        setError('일부 항목에 누락된 key가 있어 JSON 구조가 일관되지 않습니다.');
-        onValidData(null, 'error');
+        const allKeys = new Set<string>();
+        for (const item of target) {
+          if (typeof item !== 'object' || item === null || Array.isArray(item)) {
+            setError('배열의 각 항목은 객체여야 합니다.');
+            onValidData(null, 'error');
+            return;
+          }
+          Object.keys(item).forEach((key) => allKeys.add(key));
+        }
+
+        const hasInconsistentKeys = target.some((item) => [...allKeys].some((key) => !(key in item)));
+        if (hasInconsistentKeys) {
+          setError('일부 항목에 누락된 key가 있어 JSON 구조가 일관되지 않습니다.');
+          onValidData(null, 'error');
+          return;
+        }
+
+        onValidData(target, 'success');
         return;
       }
 
-      onValidData(json, 'success');
+      if (Array.isArray(json)) {
+        onValidData(json, 'success');
+        return;
+      }
+
+      setError('최상위 JSON이 배열이 아닙니다. 배열경로를 입력해 주세요.');
+      onValidData(null, 'error');
     } catch (err) {
       setError('API 엔드포인트가 JSON이 아니거나 JSON 코드에 문제가 있습니다. 확인하세요.');
       console.error(err);
@@ -124,7 +152,20 @@ export default function JsonValidator({ onValidData }: Props) {
                   id="api-url"
                   type="text"
                   value={apiUrl}
-                  onChange={(e) => setApiUrl(e.target.value)}
+                  onChange={(event) => {
+                    const newValue = event.target.value;
+                    setApiUrl(newValue);
+                    setBasicUsername('');
+                    setBasicPassword('');
+                    setBearerToken('');
+                    setApiKeyName('');
+                    setApiKeyValue('');
+                    setNotionSecret('');
+                    setNotionDbId('');
+                    setJsonPath('');
+                    setIsJsonValid(false);
+                    onValidData(null, null);
+                  }}
                   placeholder={apiUrlPlaceholder}
                   disabled={apiUrlDisabled}
                   required
@@ -134,7 +175,11 @@ export default function JsonValidator({ onValidData }: Props) {
             <div className={styles.group}>
               <label htmlFor="auth-type">Auth Type</label>
               <div className={styles.value}>
-                <select id="auth-type" value={authType} onChange={(e) => setAuthType(e.target.value as AuthType)}>
+                <select
+                  id="auth-type"
+                  value={authType}
+                  onChange={(event) => setAuthType(event.target.value as AuthType)}
+                >
                   <option value="none">No Auth</option>
                   <option value="basic">Basic Auth</option>
                   <option value="bearer">Bearer Token</option>
@@ -152,7 +197,7 @@ export default function JsonValidator({ onValidData }: Props) {
                       id="username"
                       type="text"
                       value={basicUsername}
-                      onChange={(e) => setBasicUsername(e.target.value)}
+                      onChange={(event) => setBasicUsername(event.target.value)}
                     />
                   </div>
                 </div>
@@ -163,7 +208,7 @@ export default function JsonValidator({ onValidData }: Props) {
                       id="password"
                       type="password"
                       value={basicPassword}
-                      onChange={(e) => setBasicPassword(e.target.value)}
+                      onChange={(event) => setBasicPassword(event.target.value)}
                     />
                   </div>
                 </div>
@@ -173,7 +218,12 @@ export default function JsonValidator({ onValidData }: Props) {
               <div className={styles.group}>
                 <label htmlFor="token">Token</label>
                 <div className={styles.value}>
-                  <input id="token" type="text" value={bearerToken} onChange={(e) => setBearerToken(e.target.value)} />
+                  <input
+                    id="token"
+                    type="text"
+                    value={bearerToken}
+                    onChange={(event) => setBearerToken(event.target.value)}
+                  />
                 </div>
               </div>
             )}
@@ -186,7 +236,7 @@ export default function JsonValidator({ onValidData }: Props) {
                       id="api-key"
                       type="text"
                       value={apiKeyName}
-                      onChange={(e) => setApiKeyName(e.target.value)}
+                      onChange={(event) => setApiKeyName(event.target.value)}
                     />
                   </div>
                 </div>
@@ -197,7 +247,7 @@ export default function JsonValidator({ onValidData }: Props) {
                       id="api-value"
                       type="text"
                       value={apiKeyValue}
-                      onChange={(e) => setApiKeyValue(e.target.value)}
+                      onChange={(event) => setApiKeyValue(event.target.value)}
                     />
                   </div>
                 </div>
@@ -207,7 +257,7 @@ export default function JsonValidator({ onValidData }: Props) {
                     <select
                       id="api-add-to"
                       value={apiAddTo}
-                      onChange={(e) => setApiAddTo(e.target.value as 'header' | 'query')}
+                      onChange={(event) => setApiAddTo(event.target.value as 'header' | 'query')}
                     >
                       <option value="header">Header</option>
                       <option value="query">Query Params</option>
@@ -225,7 +275,7 @@ export default function JsonValidator({ onValidData }: Props) {
                       id="notion-token"
                       type="text"
                       value={notionSecret}
-                      onChange={(e) => setNotionSecret(e.target.value)}
+                      onChange={(event) => setNotionSecret(event.target.value)}
                     />
                   </div>
                 </div>
@@ -236,9 +286,24 @@ export default function JsonValidator({ onValidData }: Props) {
                       id="notion-db"
                       type="text"
                       value={notionDbId}
-                      onChange={(e) => setNotionDbId(e.target.value)}
+                      onChange={(event) => setNotionDbId(event.target.value)}
                     />
                   </div>
+                </div>
+              </div>
+            )}
+            {isJsonValid && (
+              <div className={styles.group}>
+                <label htmlFor="json-path">배열 경로</label>
+                <div className={styles.value}>
+                  <input
+                    id="json-path"
+                    type="text"
+                    value={jsonPath}
+                    onChange={(event) => setJsonPath(event.target.value)}
+                    required={!Array.isArray(jsonRaw)}
+                    placeholder={Array.isArray(jsonRaw) ? '옵션' : '필수입력'}
+                  />
                 </div>
               </div>
             )}

@@ -1,9 +1,10 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { Client as NotionClient } from '@notionhq/client';
 import { QueryDatabaseResponse, PageObjectResponse } from '@notionhq/client/build/src/api-endpoints';
+import { get } from 'lodash';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const { url, secret, databaseId } = req.query;
+  const { url, secret, databaseId, path } = req.query;
 
   if (url === 'notion') {
     if (!secret || !databaseId || typeof secret !== 'string' || typeof databaseId !== 'string') {
@@ -40,12 +41,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
               case 'multi_select':
                 simplified[key] = Array.isArray(prop.multi_select)
                   ? prop.multi_select
-                      .map((opt) => {
-                        if (typeof opt === 'object' && 'name' in opt) {
-                          return opt.name;
-                        }
-                        return '';
-                      })
+                      .map((opt) => (typeof opt === 'object' && 'name' in opt ? opt.name : ''))
                       .join(', ')
                   : '';
                 break;
@@ -76,8 +72,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     const response = await fetch(url);
-    const data = await response.json();
-    res.status(200).json(data);
+    const json = await response.json();
+
+    if (typeof path === 'string') {
+      const extracted = get(json, path);
+      if (Array.isArray(extracted)) {
+        return res.status(200).json(extracted);
+      } else {
+        return res.status(400).json({ error: 'The specified path does not resolve to an array.' });
+      }
+    }
+
+    res.status(200).json(json);
   } catch (err) {
     res.status(500).json({ error: 'Proxy fetch error', details: err });
   }

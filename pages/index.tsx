@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { FlatJsonObject } from '@/types';
+import { FlatJsonObject, FlatJsonStatus } from '@/types';
 import Seo from '@/components/Seo';
 import JsonValidator from '@/components/JsonValidator';
 import TableView from '@/components/TableView';
@@ -7,9 +7,9 @@ import styles from '@/styles/Home.module.sass';
 
 export default function Home() {
   const [jsonData, setJsonData] = useState<FlatJsonObject[] | null>(null);
-  const [status, setStatus] = useState<'loading' | 'success' | 'error' | null>(null);
+  const [status, setStatus] = useState<FlatJsonStatus>(null);
 
-  const handleValidData = (data: FlatJsonObject[] | null, status: 'loading' | 'success' | 'error') => {
+  const handleValidData = (data: FlatJsonObject[] | null, status: FlatJsonStatus) => {
     setJsonData(data);
     setStatus(status);
   };
@@ -59,7 +59,7 @@ export default function Home() {
         {status === 'error' && (
           <section className={styles.section}>
             <div className={styles.module}>
-              <p>데이터를 불러오지 못했습니다.</p>
+              <p>데이터를 불러오지 못했습니다. 원인은 에러 문구를 확인하세요.</p>
             </div>
           </section>
         )}
