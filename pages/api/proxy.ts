@@ -74,7 +74,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const response = await fetch(url);
     const json = await response.json();
 
+    const parsedUrl = new URL(url);
+
+    if (parsedUrl.hostname === 'localhost' || parsedUrl.hostname === '127.0.0.1') {
+      return res.status(400).json({
+        error: '요청할 수 없는 주소입니다.',
+      });
+    }
+
     const contentType = response.headers.get('Content-Type');
+
+    if (response.headers.has('Content-Length')) {
+      const length = parseInt(response.headers.get('Content-Length') || '0', 10);
+      if (length > 5 * 1024 * 1024) {
+        return res.status(413).json({ error: '응답 크기가 너무 큽니다' });
+      }
+    }
 
     if (!contentType?.includes('application/json')) {
       return res.status(415).json({ error: 'Unsupported MIME type', contentType });
