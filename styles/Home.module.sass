@@ -145,19 +145,26 @@ section.section
       select
         cursor: pointer
 
+      textarea
+        border: 1px solid ds.$hex-gray-light
+        border-radius: ds.rem(3)
+        padding: ds.rem(7)
+
       select, input[type='number'], input[type='text'], label, span
         height: ds.rem(37)
         font-size: ds.rem(18)
+
+      select, input[type='number'], input[type='text'], input[type='password'], input:-webkit-autofill
+        border: 0
+        border-radius: 0
+        padding: 0
 
       select, input[type='number'], input[type='text'], input[type='password'], input:-webkit-autofill, textarea
         appearance: none
         background-color: transparent
         width: 100%
         box-shadow: 0 0 0px 1000px white inset!important
-        border: 0
         border-bottom: 1px solid ds.$hex-gray-light
-        border-radius: 0
-        padding: 0
         transition: all .4s cubic-bezier(.4,0,.2,1)
         -webkit-text-fill-color: black!important
 
