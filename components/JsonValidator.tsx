@@ -538,6 +538,7 @@ export default function JsonValidator({ onValidData }: Props) {
                         value={jsonText}
                         onChange={(e) => setJsonText(e.target.value)}
                         placeholder="JSON 코드 입력"
+                        required
                       />
                     </div>
                   </div>
@@ -569,6 +570,7 @@ export default function JsonValidator({ onValidData }: Props) {
                     onChange={(event) => setTsvText(event.target.value)}
                     placeholder="엑셀/스프레드시트의 셀 복붙"
                     rows={10}
+                    required
                   />
                 </div>
               </div>
@@ -583,6 +585,7 @@ export default function JsonValidator({ onValidData }: Props) {
                     onChange={(event) => setCsvText(event.target.value)}
                     placeholder="CSV 데이터 복붙"
                     rows={10}
+                    required
                   />
                 </div>
               </div>
