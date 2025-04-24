@@ -20,7 +20,7 @@ export default function JsonValidator({ onValidData }: Props) {
   const [csvText, setCsvText] = useState('');
 
   const [apiUrl, setApiUrl] = useState('');
-  const [apiUrlPlaceholder, setApiUrlPlaceholder] = useState('http:// 또는 https:// 로 시작하는 API 엔드포인트 주소');
+  const [apiUrlPlaceholder, setApiUrlPlaceholder] = useState('API 엔드포인트 주소');
   const [apiUrlDisabled, setApiUrlDisabled] = useState(false);
 
   const [basicUsername, setBasicUsername] = useState('');
