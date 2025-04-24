@@ -40,6 +40,7 @@ export default function Home() {
           </li>
           <li>입력하신 엔드포인트 정보는 서버에 저장되지 않습니다.</li>
           <li>일트보자 웹서비스는 데이터베이스와 관련된 일체의 서버를 운용하지 않습니다.</li>
+          <li>Headers, Body, Script를 컨트롤 하는 기능은 지원하지 않습니다.</li>
           <li className={styles.warning}>
             Auth Type을 선택하여 사용하는 경우 인증 정보가 Evil Twin Attack, Session Hijacking, DNS Spoofing / DNS
             Hijacking 등의 사유로 탈취당할 수 있습니다.{' '}
