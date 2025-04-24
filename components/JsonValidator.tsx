@@ -273,7 +273,12 @@ export default function JsonValidator({ onValidData }: Props) {
                     name="inputFormat"
                     value="advanced"
                     checked={inputFormat === 'advanced'}
-                    onChange={() => setInputFormat('advanced')}
+                    onChange={() => {
+                      setInputFormat('advanced');
+                      setIsJsonValid(false);
+                      setError('');
+                      onValidData(null, null);
+                    }}
                   />
                   {inputFormat === 'advanced' ? (
                     <div className={styles.checked}>
@@ -293,7 +298,12 @@ export default function JsonValidator({ onValidData }: Props) {
                     name="inputFormat"
                     value="tsv"
                     checked={inputFormat === 'tsv'}
-                    onChange={() => setInputFormat('tsv')}
+                    onChange={() => {
+                      setInputFormat('tsv');
+                      setIsJsonValid(false);
+                      setError('');
+                      onValidData(null, null);
+                    }}
                   />
                   {inputFormat === 'tsv' ? (
                     <div className={styles.checked}>
@@ -313,7 +323,12 @@ export default function JsonValidator({ onValidData }: Props) {
                     name="inputFormat"
                     value="csv"
                     checked={inputFormat === 'csv'}
-                    onChange={() => setInputFormat('csv')}
+                    onChange={() => {
+                      setInputFormat('csv');
+                      setIsJsonValid(false);
+                      setError('');
+                      onValidData(null, null);
+                    }}
                   />
                   {inputFormat === 'csv' ? (
                     <div className={styles.checked}>
@@ -341,7 +356,12 @@ export default function JsonValidator({ onValidData }: Props) {
                           name="inputType"
                           value={type}
                           checked={inputType === type}
-                          onChange={() => setInputType(type)}
+                          onChange={() => {
+                            setInputType(type);
+                            setIsJsonValid(false);
+                            setError('');
+                            onValidData(null, null);
+                          }}
                         />
                         {inputType === type ? (
                           <div className={styles.checked}>
