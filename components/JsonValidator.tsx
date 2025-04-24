@@ -9,15 +9,22 @@ type Props = {
   onValidData: (data: FlatJsonObject[] | null, status: FlatJsonStatus) => void;
 };
 
-type AuthType = 'none' | 'basic' | 'bearer' | 'apikey' | 'notion';
+type InputType = (typeof inputTypes)[number];
 
+const inputTypes = ['url', 'json'] as const;
+
+type AuthType = 'none' | 'basic' | 'bearer' | 'apikey' | 'notion';
 export default function JsonValidator({ onValidData }: Props) {
+  const [inputType, setInputType] = useState<InputType>('url');
+
   const [authType, setAuthType] = useState<AuthType>('none');
 
-  const [inputType, setInputType] = useState<'url' | 'tsv' | 'csv'>('url');
+  const [inputFormat, setInputFormat] = useState<'advanced' | 'tsv' | 'csv'>('advanced');
 
   const [tsvText, setTsvText] = useState('');
   const [csvText, setCsvText] = useState('');
+
+  const [jsonText, setJsonText] = useState('');
 
   const [apiUrl, setApiUrl] = useState('');
   const [apiUrlPlaceholder, setApiUrlPlaceholder] = useState('API 엔드포인트 주소');
@@ -125,12 +132,12 @@ export default function JsonValidator({ onValidData }: Props) {
     setIsJsonValid(false);
     setJsonRaw(null);
 
-    if (inputType === 'tsv') {
+    if (inputFormat === 'tsv') {
       handleTsvSubmit();
       return;
     }
 
-    if (inputType === 'csv') {
+    if (inputFormat === 'csv') {
       handleDelimitedSubmit(csvText, ',');
       return;
     }
@@ -148,6 +155,32 @@ export default function JsonValidator({ onValidData }: Props) {
             [apiKeyName]: apiKeyValue,
           }),
       };
+
+      if (inputType === 'json') {
+        const parsed = JSON.parse(jsonText);
+        console.log('📦 JSON 파싱 결과:', parsed); // 추가
+
+        setJsonRaw(parsed);
+        setIsJsonValid(true);
+
+        if (jsonPath.trim()) {
+          const target = get(parsed, jsonPath.trim());
+          console.log('🔎 JSON 경로 적용 후 결과:', target); // 추가
+
+          if (!Array.isArray(target)) {
+            setError('입력한 경로에 해당하는 값이 배열이 아닙니다.');
+            onValidData(null, 'error');
+            return;
+          }
+          onValidData(target, 'success');
+        } else if (Array.isArray(parsed)) {
+          onValidData(parsed, 'success');
+        } else {
+          setError('최상위 JSON이 배열이 아닙니다. 배열 경로를 입력해 주세요.');
+          onValidData(null, 'error');
+        }
+        return;
+      }
 
       const isNotion = authType === 'notion';
 
@@ -231,18 +264,18 @@ export default function JsonValidator({ onValidData }: Props) {
           <fieldset>
             <legend>엔드포인트 정보 입력폼</legend>
             <div className={styles.group}>
-              <span>JSON 입력</span>
+              <span>입력 포맷</span>
               <div className={styles.checkboxes}>
                 <div className={styles.checkbox}>
                   <input
-                    id="json-url"
+                    id="format-advanced"
                     type="radio"
-                    name="inputType"
-                    value="url"
-                    checked={inputType === 'url'}
-                    onChange={() => setInputType('url')}
+                    name="inputFormat"
+                    value="advanced"
+                    checked={inputFormat === 'advanced'}
+                    onChange={() => setInputFormat('advanced')}
                   />
-                  {inputType === 'url' ? (
+                  {inputFormat === 'advanced' ? (
                     <div className={styles.checked}>
                       <Checked />
                     </div>
@@ -251,18 +284,18 @@ export default function JsonValidator({ onValidData }: Props) {
                       <Unchecked />
                     </div>
                   )}
-                  <label htmlFor="json-url">URL</label>
+                  <label htmlFor="format-advanced">Advanced</label>
                 </div>
                 <div className={styles.checkbox}>
                   <input
-                    id="json-tsv"
+                    id="format-tsv"
                     type="radio"
-                    name="inputType"
+                    name="inputFormat"
                     value="tsv"
-                    checked={inputType === 'tsv'}
-                    onChange={() => setInputType('tsv')}
+                    checked={inputFormat === 'tsv'}
+                    onChange={() => setInputFormat('tsv')}
                   />
-                  {inputType === 'tsv' ? (
+                  {inputFormat === 'tsv' ? (
                     <div className={styles.checked}>
                       <Checked />
                     </div>
@@ -271,18 +304,18 @@ export default function JsonValidator({ onValidData }: Props) {
                       <Unchecked />
                     </div>
                   )}
-                  <label htmlFor="json-tsv">TSV</label>
+                  <label htmlFor="format-tsv">TSV</label>
                 </div>
                 <div className={styles.checkbox}>
                   <input
-                    id="json-csv"
+                    id="format-csv"
                     type="radio"
-                    name="inputType"
+                    name="inputFormat"
                     value="csv"
-                    checked={inputType === 'csv'}
-                    onChange={() => setInputType('csv')}
+                    checked={inputFormat === 'csv'}
+                    onChange={() => setInputFormat('csv')}
                   />
-                  {inputType === 'csv' ? (
+                  {inputFormat === 'csv' ? (
                     <div className={styles.checked}>
                       <Checked />
                     </div>
@@ -291,160 +324,205 @@ export default function JsonValidator({ onValidData }: Props) {
                       <Unchecked />
                     </div>
                   )}
-                  <label htmlFor="json-csv">CSV</label>
+                  <label htmlFor="format-csv">CSV</label>
                 </div>
               </div>
             </div>
-            {inputType === 'url' && (
+            {inputFormat === 'advanced' && (
               <>
                 <div className={styles.group}>
-                  <label htmlFor="api-url">API URL</label>
-                  <div className={styles.value}>
-                    <input
-                      id="api-url"
-                      type="text"
-                      value={apiUrl}
-                      onChange={(event) => {
-                        const newValue = event.target.value;
-                        setApiUrl(newValue);
-                        setBasicUsername('');
-                        setBasicPassword('');
-                        setBearerToken('');
-                        setApiKeyName('');
-                        setApiKeyValue('');
-                        setNotionSecret('');
-                        setNotionDbId('');
-                        setJsonPath('');
-                        setIsJsonValid(false);
-                        onValidData(null, null);
-                      }}
-                      placeholder={apiUrlPlaceholder}
-                      disabled={apiUrlDisabled}
-                      required
-                    />
+                  <span>입력 타입</span>
+                  <div className={styles.checkboxes}>
+                    {inputTypes.map((type) => (
+                      <div className={styles.checkbox} key={type}>
+                        <input
+                          id={`input-${type}`}
+                          type="radio"
+                          name="inputType"
+                          value={type}
+                          checked={inputType === type}
+                          onChange={() => setInputType(type)}
+                        />
+                        {inputType === type ? (
+                          <div className={styles.checked}>
+                            <Checked />
+                          </div>
+                        ) : (
+                          <div className={styles.unchecked}>
+                            <Unchecked />
+                          </div>
+                        )}
+                        <label htmlFor={`input-${type}`}>{type.toUpperCase()}</label>
+                      </div>
+                    ))}
                   </div>
                 </div>
-                <div className={styles.group}>
-                  <label htmlFor="auth-type">Auth Type</label>
-                  <div className={styles.value}>
-                    <select
-                      id="auth-type"
-                      value={authType}
-                      onChange={(event) => setAuthType(event.target.value as AuthType)}
-                    >
-                      <option value="none">No Auth</option>
-                      <option value="basic">Basic Auth</option>
-                      <option value="bearer">Bearer Token</option>
-                      <option value="apikey">API Key</option>
-                      <option value="notion">Notion Database API</option>
-                    </select>
-                  </div>
-                </div>
-                {authType === 'basic' && (
-                  <div className={styles.groups}>
+                {inputType === 'url' && (
+                  <>
                     <div className={styles.group}>
-                      <label htmlFor="username">Username</label>
+                      <label htmlFor="api-url">API URL</label>
                       <div className={styles.value}>
                         <input
-                          id="username"
+                          id="api-url"
                           type="text"
-                          value={basicUsername}
-                          onChange={(event) => setBasicUsername(event.target.value)}
+                          value={apiUrl}
+                          onChange={(event) => {
+                            const newValue = event.target.value;
+                            setApiUrl(newValue);
+                            setBasicUsername('');
+                            setBasicPassword('');
+                            setBearerToken('');
+                            setApiKeyName('');
+                            setApiKeyValue('');
+                            setNotionSecret('');
+                            setNotionDbId('');
+                            setJsonPath('');
+                            setIsJsonValid(false);
+                            onValidData(null, null);
+                          }}
+                          placeholder={apiUrlPlaceholder}
+                          disabled={apiUrlDisabled}
+                          required
                         />
                       </div>
                     </div>
                     <div className={styles.group}>
-                      <label htmlFor="password">Password</label>
+                      <label htmlFor="auth-type">Auth Type</label>
                       <div className={styles.value}>
-                        <input
-                          id="password"
-                          type="password"
-                          value={basicPassword}
-                          onChange={(event) => setBasicPassword(event.target.value)}
-                        />
+                        <select
+                          id="auth-type"
+                          value={authType}
+                          onChange={(event) => setAuthType(event.target.value as AuthType)}
+                        >
+                          <option value="none">No Auth</option>
+                          <option value="basic">Basic Auth</option>
+                          <option value="bearer">Bearer Token</option>
+                          <option value="apikey">API Key</option>
+                          <option value="notion">Notion Database API</option>
+                        </select>
                       </div>
                     </div>
-                  </div>
+                    {authType === 'basic' && (
+                      <div className={styles.groups}>
+                        <div className={styles.group}>
+                          <label htmlFor="username">Username</label>
+                          <div className={styles.value}>
+                            <input
+                              id="username"
+                              type="text"
+                              value={basicUsername}
+                              onChange={(event) => setBasicUsername(event.target.value)}
+                            />
+                          </div>
+                        </div>
+                        <div className={styles.group}>
+                          <label htmlFor="password">Password</label>
+                          <div className={styles.value}>
+                            <input
+                              id="password"
+                              type="password"
+                              value={basicPassword}
+                              onChange={(event) => setBasicPassword(event.target.value)}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    {authType === 'bearer' && (
+                      <div className={styles.group}>
+                        <label htmlFor="token">Token</label>
+                        <div className={styles.value}>
+                          <input
+                            id="token"
+                            type="text"
+                            value={bearerToken}
+                            onChange={(event) => setBearerToken(event.target.value)}
+                          />
+                        </div>
+                      </div>
+                    )}
+                    {authType === 'apikey' && (
+                      <div className={styles.groups}>
+                        <div className={styles.group}>
+                          <label htmlFor="api-key">Key</label>
+                          <div className={styles.value}>
+                            <input
+                              id="api-key"
+                              type="text"
+                              value={apiKeyName}
+                              onChange={(event) => setApiKeyName(event.target.value)}
+                            />
+                          </div>
+                        </div>
+                        <div className={styles.group}>
+                          <label htmlFor="api-value">Value</label>
+                          <div className={styles.value}>
+                            <input
+                              id="api-value"
+                              type="text"
+                              value={apiKeyValue}
+                              onChange={(event) => setApiKeyValue(event.target.value)}
+                            />
+                          </div>
+                        </div>
+                        <div className={styles.group}>
+                          <label htmlFor="api-add-to">Add to</label>
+                          <div className={styles.value}>
+                            <select
+                              id="api-add-to"
+                              value={apiAddTo}
+                              onChange={(event) => setApiAddTo(event.target.value as 'header' | 'query')}
+                            >
+                              <option value="header">Header</option>
+                              <option value="query">Query Params</option>
+                            </select>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                    {authType === 'notion' && (
+                      <div className={styles.groups}>
+                        <div className={styles.group}>
+                          <label htmlFor="notion-token">Secret Token</label>
+                          <div className={styles.value}>
+                            <input
+                              id="notion-token"
+                              type="text"
+                              value={notionSecret}
+                              onChange={(event) => setNotionSecret(event.target.value)}
+                            />
+                          </div>
+                        </div>
+                        <div className={styles.group}>
+                          <label htmlFor="notion-db">Database ID</label>
+                          <div className={styles.value}>
+                            <input
+                              id="notion-db"
+                              type="text"
+                              value={notionDbId}
+                              onChange={(event) => setNotionDbId(event.target.value)}
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    )}
+                  </>
                 )}
-                {authType === 'bearer' && (
+                {inputType === 'json' && (
                   <div className={styles.group}>
-                    <label htmlFor="token">Token</label>
+                    <label htmlFor="json-input">JSON 입력</label>
                     <div className={styles.value}>
-                      <input
-                        id="token"
-                        type="text"
-                        value={bearerToken}
-                        onChange={(event) => setBearerToken(event.target.value)}
+                      <textarea
+                        id="json-input"
+                        rows={10}
+                        value={jsonText}
+                        onChange={(e) => setJsonText(e.target.value)}
+                        placeholder="JSON 코드 입력"
                       />
                     </div>
                   </div>
                 )}
-                {authType === 'apikey' && (
-                  <div className={styles.groups}>
-                    <div className={styles.group}>
-                      <label htmlFor="api-key">Key</label>
-                      <div className={styles.value}>
-                        <input
-                          id="api-key"
-                          type="text"
-                          value={apiKeyName}
-                          onChange={(event) => setApiKeyName(event.target.value)}
-                        />
-                      </div>
-                    </div>
-                    <div className={styles.group}>
-                      <label htmlFor="api-value">Value</label>
-                      <div className={styles.value}>
-                        <input
-                          id="api-value"
-                          type="text"
-                          value={apiKeyValue}
-                          onChange={(event) => setApiKeyValue(event.target.value)}
-                        />
-                      </div>
-                    </div>
-                    <div className={styles.group}>
-                      <label htmlFor="api-add-to">Add to</label>
-                      <div className={styles.value}>
-                        <select
-                          id="api-add-to"
-                          value={apiAddTo}
-                          onChange={(event) => setApiAddTo(event.target.value as 'header' | 'query')}
-                        >
-                          <option value="header">Header</option>
-                          <option value="query">Query Params</option>
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-                )}
-                {authType === 'notion' && (
-                  <div className={styles.groups}>
-                    <div className={styles.group}>
-                      <label htmlFor="notion-token">Secret Token</label>
-                      <div className={styles.value}>
-                        <input
-                          id="notion-token"
-                          type="text"
-                          value={notionSecret}
-                          onChange={(event) => setNotionSecret(event.target.value)}
-                        />
-                      </div>
-                    </div>
-                    <div className={styles.group}>
-                      <label htmlFor="notion-db">Database ID</label>
-                      <div className={styles.value}>
-                        <input
-                          id="notion-db"
-                          type="text"
-                          value={notionDbId}
-                          onChange={(event) => setNotionDbId(event.target.value)}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                )}
-                {isJsonValid && (
+                {inputFormat === 'advanced' && isJsonValid && (
                   <div className={styles.group}>
                     <label htmlFor="json-path">배열 경로</label>
                     <div className={styles.value}>
@@ -454,14 +532,14 @@ export default function JsonValidator({ onValidData }: Props) {
                         value={jsonPath}
                         onChange={(event) => setJsonPath(event.target.value)}
                         required={!Array.isArray(jsonRaw)}
-                        placeholder={Array.isArray(jsonRaw) ? '옵션' : '필수입력'}
+                        placeholder={Array.isArray(jsonRaw) ? '필수입력 아님' : '필수입력 항목'}
                       />
                     </div>
                   </div>
                 )}
               </>
             )}
-            {inputType === 'tsv' && (
+            {inputFormat === 'tsv' && (
               <div className={styles.group}>
                 <label htmlFor="tsv-text">TSV 데이터</label>
                 <div className={styles.value}>
@@ -475,7 +553,7 @@ export default function JsonValidator({ onValidData }: Props) {
                 </div>
               </div>
             )}
-            {inputType === 'csv' && (
+            {inputFormat === 'csv' && (
               <div className={styles.group}>
                 <label htmlFor="csv-text">CSV 데이터</label>
                 <div className={styles.value}>

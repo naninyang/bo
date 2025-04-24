@@ -136,58 +136,58 @@ section.section
       align-items: center
       gap: ds.rem(5)
 
-    label, span
-      display: flex
-      align-items: center
-      border-bottom: ds.rem(2) solid transparent
-      width: ds.rem(117)
+      label, span
+        display: flex
+        align-items: center
+        border-bottom: ds.rem(2) solid transparent
+        width: ds.rem(117)
 
-    select
-      cursor: pointer
+      select
+        cursor: pointer
 
-    select, input[type='number'], input[type='text'], label, span
-      height: ds.rem(37)
-      font-size: ds.rem(18)
+      select, input[type='number'], input[type='text'], label, span
+        height: ds.rem(37)
+        font-size: ds.rem(18)
 
-    select, input[type='number'], input[type='text'], input[type='password'], input:-webkit-autofill, textarea
-      appearance: none
-      background-color: transparent
-      width: 100%
-      box-shadow: 0 0 0px 1000px white inset!important
-      border: 0
-      border-bottom: 1px solid ds.$hex-gray-light
-      border-radius: 0
-      padding: 0
-      transition: all .4s cubic-bezier(.4,0,.2,1)
-      -webkit-text-fill-color: black!important
-
-      &:disabled
-        opacity: .2
-
-      &:focus, &:focus-visible
-        outline: 0
-        border-bottom: ds.rem(5) solid ds.$hex-accent
-        color: ds.$hex-accent
+      select, input[type='number'], input[type='text'], input[type='password'], input:-webkit-autofill, textarea
+        appearance: none
+        background-color: transparent
+        width: 100%
         box-shadow: 0 0 0px 1000px white inset!important
+        border: 0
+        border-bottom: 1px solid ds.$hex-gray-light
+        border-radius: 0
+        padding: 0
+        transition: all .4s cubic-bezier(.4,0,.2,1)
+        -webkit-text-fill-color: black!important
 
-      body[data-theme='dark'] &
-        -webkit-text-fill-color: white!important
-        box-shadow: 0 0 0px 1000px black inset!important
+        &:disabled
+          opacity: .2
 
         &:focus, &:focus-visible
-          -webkit-text-fill-color: ds.$hex-accent!important
+          outline: 0
+          border-bottom: ds.rem(5) solid ds.$hex-accent
+          color: ds.$hex-accent
+          box-shadow: 0 0 0px 1000px white inset!important
 
-    .value
-      @include ds.col
+        body[data-theme='dark'] &
+          -webkit-text-fill-color: white!important
+          box-shadow: 0 0 0px 1000px black inset!important
 
-      input, select, textarea
-        width: 100%
+          &:focus, &:focus-visible
+            -webkit-text-fill-color: ds.$hex-accent!important
 
-      textarea
-        height: ds.rem(270)
-        resize: none
-        font-family: monospace
-        font-size: ds.rem(14)
+      .value
+        @include ds.col
+
+        input, select, textarea
+          width: 100%
+
+        textarea
+          height: ds.rem(270)
+          resize: none
+          font-family: monospace
+          font-size: ds.rem(14)
 
     .groups
       display: flex
