@@ -201,6 +201,13 @@ export default function JsonValidator({ onValidData }: Props) {
         return;
       }
 
+      const contentType = response.headers.get('Content-Type');
+      if (!contentType?.includes('application/json')) {
+        setError('Mime 설정에 문제가 있습니다.');
+        onValidData(null, 'error');
+        return;
+      }
+
       const json = await response.json();
 
       if (typeof json !== 'object' || json === null) {

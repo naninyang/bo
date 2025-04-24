@@ -74,6 +74,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const response = await fetch(url);
     const json = await response.json();
 
+    const contentType = response.headers.get('Content-Type');
+
+    if (!contentType?.includes('application/json')) {
+      return res.status(415).json({ error: 'Unsupported MIME type', contentType });
+    }
+
     if (typeof path === 'string') {
       const extracted = get(json, path);
       if (Array.isArray(extracted)) {
