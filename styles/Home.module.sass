@@ -128,13 +128,21 @@ section.section
   fieldset
     display: flex
     flex-direction: column
-    gap: ds.rem(5)
+    gap: ds.rem(12)
     width: 100%
+
+    @include ds.mq(minSmall)
+      gap: ds.rem(5)
 
     .group
       display: flex
-      align-items: center
-      gap: ds.rem(5)
+
+      @include ds.mq(maxExtraSmall)
+        flex-direction: column
+
+      @include ds.mq(minSmall)
+        align-items: center
+        gap: ds.rem(5)
 
       label, span
         display: flex
@@ -274,6 +282,9 @@ section.section
     > p
       color: ds.$hex-danger
       font-weight: 700
+
+      @include ds.mq(minSmall)
+        padding-left: ds.rem(122)
 
     .submit
       padding-top: ds.rem(12)
