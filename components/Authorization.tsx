@@ -1,16 +1,10 @@
 import styles from '@/styles/All.module.sass';
+import { AuthData, AuthType } from '@/types';
 
-type AuthType = 'none' | 'basic' | 'bearer';
-
-type BasicAuthData = { username: string; password: string };
-type BearerAuthData = string;
-type NoAuthData = Record<string, unknown>;
-type AuthData = BasicAuthData | BearerAuthData | NoAuthData;
-
-interface AuthorizationProps {
+export type AuthorizationProps = {
   authType: AuthType;
   onChange: (type: AuthType, value: AuthData | ((prev: AuthData) => AuthData)) => void;
-}
+};
 
 export function Authorization({ authType, onChange }: AuthorizationProps) {
   return (
@@ -24,7 +18,7 @@ export function Authorization({ authType, onChange }: AuthorizationProps) {
               <select
                 id="auth-type"
                 value={authType}
-                onChange={(event) => onChange(event.target.value as AuthType, {})}
+                onChange={(event) => onChange(event.target.value as AuthType, '')}
               >
                 <option value="none">None</option>
                 <option value="basic">Basic Auth</option>
@@ -44,10 +38,13 @@ export function Authorization({ authType, onChange }: AuthorizationProps) {
                   id="basic-username"
                   placeholder="Username"
                   onChange={(event) =>
-                    onChange('basic', (prev) => ({
-                      ...(typeof prev === 'object' && prev !== null ? prev : {}),
-                      username: event.target.value,
-                    }))
+                    onChange('basic', (prev) => {
+                      const prevObj = typeof prev === 'object' && prev !== null ? prev : { username: '', password: '' };
+                      return {
+                        username: event.target.value,
+                        password: 'password' in prevObj ? prevObj.password : '',
+                      };
+                    })
                   }
                 />
               </div>
@@ -60,10 +57,13 @@ export function Authorization({ authType, onChange }: AuthorizationProps) {
                   id="basic-password"
                   placeholder="Password"
                   onChange={(event) =>
-                    onChange('basic', (prev) => ({
-                      ...(typeof prev === 'object' && prev !== null ? prev : {}),
-                      password: event.target.value,
-                    }))
+                    onChange('basic', (prev) => {
+                      const prevObj = typeof prev === 'object' && prev !== null ? prev : { username: '', password: '' };
+                      return {
+                        username: 'username' in prevObj ? prevObj.username : '',
+                        password: event.target.value,
+                      };
+                    })
                   }
                 />
               </div>

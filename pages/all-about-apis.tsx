@@ -13,12 +13,7 @@ import Dialog from '@/components/Dialog';
 import { Pagination } from '@/components/Pagination';
 import styles from '@/styles/All.module.sass';
 import { LeftArrow } from '@/components/Svgs';
-
-type AuthData =
-  | ''
-  | { username: string; password: string } // basic
-  | string // bearer
-  | { key: string; value: string }; // apikey
+import { AuthData, AuthType } from '@/types';
 
 type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue };
 type QueryParam = { key: string; value: string };
@@ -33,7 +28,7 @@ export default function AllAboutAPIs() {
   const [googleSheetId, setGoogleSheetId] = useState('');
   const [googleSheetName, setGoogleSheetName] = useState('');
   const [strapiVersion, setStrapiVersion] = useState<'v4' | 'v5'>('v4');
-  const [authType, setAuthType] = useState('none');
+  const [authType, setAuthType] = useState<AuthType>('none');
   const [authData, setAuthData] = useState<AuthData>('');
   const [headers, setHeaders] = useState<{ key: string; value: string }[]>([]);
   const [hasHeaderDuplication, setHasHeaderDuplication] = useState(false);
@@ -770,7 +765,11 @@ export default function AllAboutAPIs() {
                           authType={authType}
                           onChange={(type, value) => {
                             setAuthType(type);
-                            setAuthData(value);
+                            if (typeof value === 'function') {
+                              setAuthData((prev) => value(prev));
+                            } else {
+                              setAuthData(value);
+                            }
                           }}
                         />
                       </div>
