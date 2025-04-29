@@ -11,6 +11,8 @@ import { Authorization } from '@/components/Authorization';
 import Dialog from '@/components/Dialog';
 import { Pagination } from '@/components/Pagination';
 import styles from '@/styles/All.module.sass';
+import Anchor from '@/components/Anchor';
+import { LeftArrow } from '@/components/Svgs';
 
 type AuthData =
   | ''
@@ -491,6 +493,12 @@ export default function AllAboutAPIs() {
         pageImg={`https://bo.dev1stud.io/images/og.webp?ts=${timestamp}`}
       />
       <div className={styles.container}>
+        <div className={styles.backlink}>
+          <Anchor href="/">
+            <LeftArrow />
+            <span>뒤로가기</span>
+          </Anchor>
+        </div>
         <h1>
           <span>API의 모든것</span> <em>All About APIs</em>
         </h1>
