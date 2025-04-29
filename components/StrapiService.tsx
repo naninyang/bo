@@ -15,7 +15,6 @@ export default function StrapiService({ onChange }: Props) {
   useEffect(() => {
     if (!strapiBaseUrl || !token || !collectionName) return;
     const pluralApiId = `${collectionName}s`;
-    const idSegment = version === 'v4' ? ':id' : ':documentId';
     const url = `${strapiBaseUrl}/api/${pluralApiId}`;
     onChange(url, token, version);
   }, [strapiBaseUrl, token, version, collectionName, onChange]);

@@ -2,6 +2,7 @@ import React, { ReactNode, useState } from 'react';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { a11yDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
 import Seo from '@/components/Seo';
+import Anchor from '@/components/Anchor';
 import RippleButton from '@/components/RippleButton';
 import GoogleSpreadsheetService from '@/components/GoogleSpreadsheetService';
 import { NotionService } from '@/components/NotionService';
@@ -11,7 +12,6 @@ import { Authorization } from '@/components/Authorization';
 import Dialog from '@/components/Dialog';
 import { Pagination } from '@/components/Pagination';
 import styles from '@/styles/All.module.sass';
-import Anchor from '@/components/Anchor';
 import { LeftArrow } from '@/components/Svgs';
 
 type AuthData =
@@ -241,6 +241,12 @@ export default function AllAboutAPIs() {
       });
 
       const responseBody = await response.json();
+
+      const responseHeadersObj: Record<string, string> = {};
+      response.headers.forEach((value, key) => {
+        responseHeadersObj[key] = value;
+      });
+      setResponseHeaders(responseHeadersObj);
 
       if (!response.ok) {
         throw new Error(responseBody.error || `요청 실패: ${response.status}`);

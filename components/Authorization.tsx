@@ -1,12 +1,18 @@
 import styles from '@/styles/All.module.sass';
 
-export function Authorization({
-  authType,
-  onChange,
-}: {
-  authType: string;
-  onChange: (type: string, value: any) => void;
-}) {
+type AuthType = 'none' | 'basic' | 'bearer';
+
+type BasicAuthData = { username: string; password: string };
+type BearerAuthData = string;
+type NoAuthData = {};
+type AuthData = BasicAuthData | BearerAuthData | NoAuthData;
+
+interface AuthorizationProps {
+  authType: AuthType;
+  onChange: (type: AuthType, value: AuthData | ((prev: AuthData) => AuthData)) => void;
+}
+
+export function Authorization({ authType, onChange }: AuthorizationProps) {
   return (
     <div className={styles.component}>
       <h3>Authorization</h3>
@@ -15,7 +21,11 @@ export function Authorization({
           <div className={styles.group}>
             <label htmlFor="auth-type">Auth Type</label>
             <div className={styles.value}>
-              <select value={authType} onChange={(event) => onChange(event.target.value, {})}>
+              <select
+                id="auth-type"
+                value={authType}
+                onChange={(event) => onChange(event.target.value as AuthType, {})}
+              >
                 <option value="none">None</option>
                 <option value="basic">Basic Auth</option>
                 <option value="bearer">Bearer Token</option>
@@ -23,6 +33,7 @@ export function Authorization({
             </div>
           </div>
         </div>
+
         {authType === 'basic' && (
           <div className={styles.col}>
             <div className={styles.group}>
@@ -32,7 +43,12 @@ export function Authorization({
                   type="text"
                   id="basic-username"
                   placeholder="Username"
-                  onChange={(event) => onChange('basic', (prev: any) => ({ ...prev, username: event.target.value }))}
+                  onChange={(event) =>
+                    onChange('basic', (prev) => ({
+                      ...(typeof prev === 'object' && prev !== null ? prev : {}),
+                      username: event.target.value,
+                    }))
+                  }
                 />
               </div>
             </div>
@@ -43,12 +59,18 @@ export function Authorization({
                   type="password"
                   id="basic-password"
                   placeholder="Password"
-                  onChange={(event) => onChange('basic', (prev: any) => ({ ...prev, password: event.target.value }))}
+                  onChange={(event) =>
+                    onChange('basic', (prev) => ({
+                      ...(typeof prev === 'object' && prev !== null ? prev : {}),
+                      password: event.target.value,
+                    }))
+                  }
                 />
               </div>
             </div>
           </div>
         )}
+
         {authType === 'bearer' && (
           <div className={styles.col}>
             <div className={styles.group}>
