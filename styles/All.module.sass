@@ -1,0 +1,680 @@
+.main
+  display: flex
+  flex-direction: column
+  gap: ds.rem(23)
+  width: 100%
+  margin: 0 auto
+
+  @include ds.mq(minSmall)
+    padding: ds.rem(15) 0
+    width: 100%
+
+  @include ds.mq(minMedium)
+    margin: 0
+
+  @include ds.mq(maxExtraSmall)
+    background-color: ds.$hex-white
+    max-width: none
+    width: 100%
+
+    body[data-theme='dark'] &
+      background-color: ds.$hex-black
+
+  @include ds.mq(maxExtraSmall)
+    padding-top: ds.rem(23)
+    padding-bottom: ds.rem(23)
+
+  .container
+    display: flex
+    flex-direction: column
+
+    @include ds.mq(maxExtraSmall)
+      gap: ds.rem(12)
+      padding-right: 0
+      padding-left: 0
+
+    h1
+      padding: ds.rem(23) ds.rem(12) ds.rem(13)
+      font-size: ds.rem(27)
+      @include ds.fw(800)
+
+      em
+        font-size: ds.rem(20)
+        font-style: normal
+
+    .announcement
+      margin-right: ds.rem(12)
+      margin-left: ds.rem(32)
+      font-weight: 500
+      list-style: square
+
+      strong
+        font-weight: 700
+        color: ds.$hex-accent
+
+      .warning
+        color: ds.$hex-danger
+
+    .form
+      display: flex
+      flex-direction: column
+      width: 100%
+
+section.section
+  display: flex
+  flex-direction: column
+  gap: ds.rem(23)
+  margin: 0 auto
+
+  @include ds.mq(minSmall)
+    padding: ds.rem(15) ds.rem(12)
+    width: 100%
+
+  @include ds.mq(minLarge)
+    margin: 0
+
+    &:last-of-type
+      padding-bottom: 0
+
+  @include ds.mq(maxExtraSmall)
+    background-color: ds.$hex-white
+    width: 100%
+
+    body[data-theme='dark'] &
+      background-color: ds.$hex-black
+
+  .module
+    display: flex
+    flex-direction: column
+    flex-grow: 1
+    gap: ds.rem(13)
+    padding: ds.rem(17)
+
+    @include ds.mq(minSmall)
+      border: ds.rem(2) solid ds.$hex-light
+      border-radius: ds.rem(17)
+
+      body[data-theme='dark'] &
+        border: ds.rem(2) solid ds.$hex-gray-light
+
+    h2
+      font-size: ds.rem(20)
+      @include ds.fw(500)
+
+    > p
+      @include ds.fw(600)
+      text-align: center
+
+  fieldset
+    display: flex
+    flex-direction: column
+    gap: ds.rem(12)
+    width: 100%
+
+    @include ds.mq(minSmall)
+      gap: ds.rem(5)
+
+    hr
+      @include ds.visually-hidden-focusable
+      position: static
+      border: 0
+      margin: ds.rem(12) 0
+
+    .collapse-button
+      margin: ds.rem(23) 0
+      border: 1px solid ds.$hex-gray-dark
+      border-bottom: 0
+      border-radius: ds.rem(3)
+
+      ul
+        display: flex
+
+        li
+          @include ds.col
+
+          button
+            transition: all .4s cubic-bezier(.4,0,.2,1)
+            background-color: transparent
+            border: 0
+            border-bottom: ds.rem(2) solid ds.$hex-gray-dark
+            border-left: ds.rem(1) solid ds.$hex-gray-dark
+            padding: ds.rem(7) 0
+            width: 100%
+
+            &:hover, &:focus-visible, &.current
+              border-bottom: ds.rem(2) solid ds.$hex-accent
+              font-weight: 700
+
+          &:first-of-type
+            button
+              border-left: 0
+
+    .collapse-contents
+      > div
+        display: flex
+        flex-direction: column
+        gap: ds.rem(12)
+
+        &:not(.show)
+          display: none
+
+    .group
+      display: flex
+
+      @include ds.mq(maxExtraSmall)
+        flex-direction: column
+
+      @include ds.mq(minSmall)
+        align-items: center
+        gap: ds.rem(5)
+
+      label, span
+        display: flex
+        align-items: center
+        border-bottom: ds.rem(2) solid transparent
+        width: ds.rem(147)
+
+      select
+        cursor: pointer
+
+      textarea
+        border: 1px solid ds.$hex-gray-light
+        border-radius: ds.rem(3)
+        padding: ds.rem(7)
+
+      select, input[type='number'], input[type='text'], label, span
+        height: ds.rem(37)
+        font-size: ds.rem(18)
+
+      select, input[type='number'], input[type='text'], input[type='password'], input:-webkit-autofill
+        border: 0
+        border-radius: 0
+        padding: 0
+
+      select, input[type='number'], input[type='text'], input[type='password'], input:-webkit-autofill, textarea
+        appearance: none
+        background-color: transparent
+        width: 100%
+        box-shadow: 0 0 0px 1000px white inset!important
+        border-bottom: 1px solid ds.$hex-gray-light
+        transition: all .4s cubic-bezier(.4,0,.2,1)
+        -webkit-text-fill-color: black!important
+
+        &:disabled
+          opacity: .2
+
+        &:focus, &:focus-visible
+          outline: 0
+          border-bottom: ds.rem(5) solid ds.$hex-accent
+          color: ds.$hex-accent
+          box-shadow: 0 0 0px 1000px white inset!important
+
+        body[data-theme='dark'] &
+          -webkit-text-fill-color: white!important
+          box-shadow: 0 0 0px 1000px black inset!important
+
+          &:focus, &:focus-visible
+            -webkit-text-fill-color: ds.$hex-accent!important
+
+      .value
+        @include ds.col
+
+        input, select, textarea
+          width: 100%
+
+        textarea
+          height: ds.rem(270)
+          resize: none
+          font-family: monospace
+          font-size: ds.rem(14)
+
+    .groups
+      display: flex
+      gap: ds.rem(5)
+
+      @include ds.mq(maxSmall)
+        flex-direction: column
+
+      @include ds.mq(minMedium)
+        flex-wrap: wrap
+
+        .group
+          width: calc(50% - ds.rem(3))
+
+          &:nth-of-type(3)
+            width: 100%
+
+    .checkboxes
+      display: flex
+      gap: ds.rem(12)
+      @include ds.col
+
+      .checkbox
+        display: flex
+        @include ds.col
+        align-items: center
+        position: relative
+        height: ds.rem(37)
+
+        > div
+          display: flex
+          justify-content: center
+          align-items: center
+          width: ds.rem(24)
+          height: ds.rem(24)
+          background-color: ds.$hex-white
+          position: absolute
+          top: 50%
+          left: 0
+          transform: translateY(-50%)
+          border-radius: ds.rem(14)
+
+          body[data-theme='dark'] &
+            background-color: ds.$hex-dark
+
+          &.checked
+            svg
+              path
+                fill: ds.$hex-accent
+
+                body[data-theme='dark'] &
+                  fill: ds.$hex-accent
+
+          &.unchecked
+            svg
+              path
+                fill: rgba(ds.$hex-dark, .7)
+
+                body[data-theme='dark'] &
+                  fill: rgba(ds.$hex-light, .7)
+
+        input
+          @include ds.hidden-box
+          margin: 0
+          appearance: none
+          border-radius: 100%
+          width: ds.rem(24)
+          height: ds.rem(24)
+
+        label
+          position: relative
+          display: inline-block
+          height: auto
+          width: auto
+          padding-left: ds.rem(27)
+          font-size: ds.rem(16)
+          font-weight: 700
+          white-space: nowrap
+
+    > p
+      color: ds.$hex-danger
+      font-weight: 700
+
+      @include ds.mq(minSmall)
+        padding-left: ds.rem(122)
+
+    .submit
+      padding-top: ds.rem(12)
+      width: 100%
+
+      button
+        background-color: transparent
+        border: ds.rem(2) solid
+        border-radius: ds.rem(3)
+        width: 100%
+        height: ds.rem(52)
+        font-size: ds.rem(16)
+        @include ds.fw(500)
+        color: ds.$hex-accent
+
+  .result
+    position: relative
+
+    > p
+      font-size: ds.rem(20)
+      font-weight: 700
+      color: ds.$hex-danger
+
+    .table
+      overflow: auto
+      -webkit-overflow-scrolling: touch
+      width: 100%
+      margin-bottom: 1rem
+      vertical-align: top
+
+      table
+        caption-side: bottom
+        border-collapse: collapse
+        border: ds.rem(1) solid ds.$hex-gray-light
+        border-left: 0
+        border-top: 0
+
+        body[data-theme='dark'] &
+          border-color: ds.$hex-gray-dark
+
+        th
+          text-align: -webkit-match-parent
+
+        th, td
+          border: ds.rem(1) solid ds.$hex-gray-light
+          border-right: 0
+          border-bottom: 0
+          padding: 0
+
+          body[data-theme='dark'] &
+            border-color: ds.$hex-gray-dark
+
+          span
+            display: block
+            padding: ds.rem(2) ds.rem(7)
+
+        th
+          font-size: ds.rem(14)
+          font-weight: 500
+          color: ds.$hex-black
+
+          body[data-theme='dark'] &
+            color: ds.$hex-white
+
+        td
+          font-size: ds.rem(12)
+          font-weight: 400
+          color: ds.$hex-gray-light
+          vertical-align: top
+
+          span
+            overflow-wrap: break-word
+            white-space: pre-wrap
+
+          th
+            color: ds.$hex-black
+
+          body[data-theme='dark'] &
+            color: ds.$hex-gray-dark
+
+            th
+              color: ds.$hex-white
+
+      &.table-loading
+        height: ds.rem(100)
+        overflow: hidden
+
+        &.notion-loading
+          height: auto
+
+          & ~ p
+            align-items: flex-end
+            padding-bottom: ds.rem(72)
+
+      & ~ p
+        position: absolute
+        top: 0
+        left: 0
+        width: 100%
+        height: 100%
+        background-color: rgba(ds.$hex-white, .8)
+        display: flex
+        justify-content: center
+        align-items: center
+
+.component
+  display: flex
+  flex-direction: column
+  gap: ds.rem(12)
+
+  h3
+    @include ds.fw(700)
+    font-size: ds.rem(16)
+
+  .cols
+    display: flex
+    gap: ds.rem(23)
+
+    .col
+      @include ds.col
+
+  .list
+    display: flex
+    flex-direction: column
+    border: 1px solid ds.$hex-gray-dark
+    border-radius: ds.rem(3)
+
+    .term, .dummy
+      display: flex
+
+      span
+        border-bottom: 1px solid ds.$hex-gray-dark
+        padding: ds.rem(5) ds.rem(7)
+
+        &:nth-of-type(1)
+          width: 30%
+
+        &:nth-of-type(2)
+          border-left: 1px solid ds.$hex-gray-dark
+          width: 70%
+
+    .term
+      span
+        font-weight: 700
+
+    .desc
+      > div
+        display: flex
+
+        .value
+          input
+            border: 0
+            border-bottom: 1px solid ds.$hex-gray-dark
+            border-radius: ds.rem(3)
+            padding: ds.rem(5) ds.rem(7)
+            width: 100%
+
+            &::placeholder
+              color: ds.$hex-gray-light
+
+            &:hover, &:focus-visible
+              outline: ds.rem(2) solid ds.$hex-accent
+
+          &:nth-of-type(1)
+            width: 30%
+
+          &:nth-of-type(2)
+            @include ds.col
+
+            input
+              border-left: 1px solid ds.$hex-gray-dark
+
+        .remove
+          width: ds.rem(100)
+
+          button
+            border: 0
+            border-bottom: 1px solid ds.$hex-gray-dark
+            border-left: 1px solid ds.$hex-gray-dark
+            background-color: transparent
+            width: 100%
+            height: ds.rem(35)
+
+    .add
+      position: relative
+
+      span
+        border-bottom: 0
+        color: ds.$hex-gray-light
+
+      button
+        background-color: transparent
+        position: absolute
+        top: 0
+        left: 0
+        width: 100%
+        height: 100%
+        cursor: text
+
+        &:hover, &:focus-visible
+          outline: ds.rem(2) solid ds.$hex-accent
+
+        span
+          @include ds.screen-reader-only
+
+.headline
+  display: flex
+  justify-content: space-between
+
+  ul
+    display: flex
+    gap: ds.rem(12)
+
+    button
+      background-color: transparent
+      height: ds.rem(35)
+      border: 1px solid ds.$hex-gray-light
+      border-radius: ds.rem(35)
+      padding: 0 ds.rem(17)
+      font-size: ds.rem(14)
+      color: ds.$hex-black
+      transition: all .4s cubic-bezier(.4,0,.2,1)
+
+      &:hover, &:focus-visible
+        background-color: ds.$hex-danger
+        border-color: ds.$hex-danger!important
+        color: ds.$hex-white!important
+        font-weight: 700
+
+      &:focus-visible
+        outline: ds.rem(2) solid rgba(ds.$hex-danger, .5)
+
+      body[data-theme='dark'] &
+        border: 1px solid ds.$hex-gray-dark
+        color: ds.$hex-white
+
+.modal-headline
+  display: flex
+  justify-content: space-between
+  align-items: center
+
+  h1
+    font-weight: 700
+    font-size: ds.rem(23)
+    color: ds.$hex-black
+
+    body[data-theme='dark'] &
+      color: ds.$hex-white
+
+  button
+    background-color: transparent
+
+    svg
+      width: ds.rem(27)
+      height: ds.rem(27)
+
+      path
+        fill: ds.$hex-black
+
+        body[data-theme='dark'] &
+          fill: ds.$hex-white
+
+    span
+      +ds.screen-reader-only
+
+.modal-content
+  background-color: ds.$hex-white
+  border-radius: ds.rem(20)
+  padding: ds.rem(23)
+  max-width: calc(100vw - ds.rem(100))
+  max-height: calc(100vh - ds.rem(208))
+  width: 100%
+  overflow: auto
+
+  body[data-theme='dark'] &
+    background-color: ds.$hex-black
+
+  +ds.mq(maxMedium)
+    display: flex
+    gap: ds.rem(23)
+    flex-direction: column
+
+  +ds.mq(minLarge)
+    .dummy
+      display: inline-flex
+      width: ds.rem(12)
+
+  .syntax-highligher
+    code
+      overflow-wrap: break-word!important
+      white-space: pre-wrap!important
+      font-size: ds.rem(14)
+
+  .table
+    overflow: auto
+    -webkit-overflow-scrolling: touch
+    width: 100%
+    margin-bottom: 1rem
+    vertical-align: top
+    border-color: var(--bs-table-border-color)
+
+    table
+      caption-side: bottom
+      border-collapse: collapse
+      min-width: 100%
+
+      th
+        text-align: -webkit-match-parent
+
+      th, td
+        padding: ds.rem(7)
+        border-bottom-width: 1px
+        font-family: monospace
+
+        body[data-theme='dark'] &
+          color: ds.$hex-white
+
+      th
+        font-size: ds.rem(16)
+        font-weight: 500
+
+      td
+        border-bottom: ds.rem(1) solid ds.$hex-gray-dark
+        font-size: ds.rem(14)
+        font-weight: 400
+
+        body[data-theme='dark'] &
+          border-bottom: ds.rem(1) solid ds.$hex-gray-light
+
+      tbody
+        border-top: ds.rem(2) solid ds.$hex-gray-dark
+
+        body[data-theme='dark'] &
+          border-bottom: ds.rem(1) solid ds.$hex-gray-light
+
+.pagination
+  display: flex
+
+  +ds.mq(maxMedium)
+    flex-direction: column
+
+  +ds.mq(minLarge)
+    justify-content: space-between
+
+  .pager
+    display: flex
+    gap: ds.rem(37)
+
+    button
+      background-color: transparent
+      border: 1px solid ds.$hex-gray-dark
+      border-radius: ds.rem(3)
+      padding: ds.rem(7) ds.rem(12)
+      font-size: ds.rem(16)
+      color: ds.$hex-black
+      transition: all .4s cubic-bezier(.4,0,.2,1)
+
+      &:hover, &:focus-visible
+        outline: ds.rem(2) solid rgba(ds.$hex-accent, .7)
+        border-color: ds.$hex-accent
+        background-color: ds.$hex-accent
+        color: ds.$hex-white
+
+    span
+      display: flex
+      align-items: center

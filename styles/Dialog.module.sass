@@ -1,0 +1,20 @@
+.dialog
+  background-color: transparent
+  margin: ds.rem(77) ds.rem(25)
+  border: 0
+  padding: 0
+  width: calc(100% - ds.rem(100))
+
+  +ds.mq(minLarge)
+    margin: ds.rem(77) ds.rem(50)
+
+  &::backdrop
+    background-color: ds.$hex-gray-dark
+
+    body[data-theme='dark'] &
+      background-color: ds.$hex-gray-light
+
+  .dialog-container
+    display: flex
+    flex-direction: column
+    gap: ds.rem(23)

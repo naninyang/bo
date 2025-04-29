@@ -14,6 +14,7 @@ type InputType = (typeof inputTypes)[number];
 const inputTypes = ['url', 'json'] as const;
 
 type AuthType = 'none' | 'basic' | 'bearer' | 'apikey' | 'notion';
+
 export default function JsonValidator({ onValidData }: Props) {
   const [inputType, setInputType] = useState<InputType>('url');
 
@@ -158,14 +159,12 @@ export default function JsonValidator({ onValidData }: Props) {
 
       if (inputType === 'json') {
         const parsed = JSON.parse(jsonText);
-        console.log('📦 JSON 파싱 결과:', parsed); // 추가
 
         setJsonRaw(parsed);
         setIsJsonValid(true);
 
         if (jsonPath.trim()) {
           const target = get(parsed, jsonPath.trim());
-          console.log('🔎 JSON 경로 적용 후 결과:', target); // 추가
 
           if (!Array.isArray(target)) {
             setError('입력한 경로에 해당하는 값이 배열이 아닙니다.');
