@@ -4,7 +4,7 @@ type AuthType = 'none' | 'basic' | 'bearer';
 
 type BasicAuthData = { username: string; password: string };
 type BearerAuthData = string;
-type NoAuthData = {};
+type NoAuthData = Record<string, unknown>;
 type AuthData = BasicAuthData | BearerAuthData | NoAuthData;
 
 interface AuthorizationProps {
