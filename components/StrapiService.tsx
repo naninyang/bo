@@ -2,22 +2,23 @@ import { useState, useEffect } from 'react';
 import styles from '@/styles/All.module.sass';
 import { Checked, Unchecked } from './Svgs';
 
-type Props = {
-  onChange: (url: string, token: string, version: 'v4' | 'v5') => void;
-};
+interface Props {
+  onChange: (url: string, token: string, version: 'v4' | 'v5', pageSize: string) => void;
+}
 
 export default function StrapiService({ onChange }: Props) {
   const [strapiBaseUrl, setStrapiBaseUrl] = useState('');
   const [token, setToken] = useState('');
   const [version, setVersion] = useState<'v4' | 'v5'>('v4');
   const [collectionName, setCollectionName] = useState('');
+  const [pageSize, setPageSize] = useState('');
 
   useEffect(() => {
     if (!strapiBaseUrl || !token || !collectionName) return;
     const pluralApiId = `${collectionName}s`;
     const url = `${strapiBaseUrl}/api/${pluralApiId}`;
-    onChange(url, token, version);
-  }, [strapiBaseUrl, token, version, collectionName, onChange]);
+    onChange(url, token, version, pageSize);
+  }, [strapiBaseUrl, token, version, collectionName, pageSize, onChange]);
 
   return (
     <div className={styles.component}>
@@ -107,6 +108,20 @@ export default function StrapiService({ onChange }: Props) {
               <label htmlFor="strapi-version-v5">v5</label>
             </div>
           </div>
+        </div>
+      </div>
+      <div className={styles.group}>
+        <label htmlFor="strapi-page-size">페이지 옵션</label>
+        <div className={styles.value}>
+          <input
+            type="text"
+            id="strapi-page-size"
+            placeholder="Page size value (최대 100)"
+            value={pageSize}
+            onChange={(event) => {
+              setPageSize(event.target.value);
+            }}
+          />
         </div>
       </div>
     </div>

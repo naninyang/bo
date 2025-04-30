@@ -27,7 +27,7 @@ export default function AllAboutAPIs() {
   const [notionDatabaseId, setNotionDatabaseId] = useState('');
   const [googleSheetId, setGoogleSheetId] = useState('');
   const [googleSheetName, setGoogleSheetName] = useState('');
-  const [strapiVersion, setStrapiVersion] = useState<'v4' | 'v5'>('v4');
+  const [strapiVersion, setStrapiVersion] = useState<string>('v4');
   const [authType, setAuthType] = useState<AuthType>('none');
   const [authData, setAuthData] = useState<AuthData>('');
   const [headers, setHeaders] = useState<{ key: string; value: string }[]>([]);
@@ -37,6 +37,9 @@ export default function AllAboutAPIs() {
   const [pageFieldName, setPageFieldName] = useState('');
   const [pageSizeFieldName, setPageSizeFieldName] = useState('');
   const [totalFieldName, setTotalFieldName] = useState('');
+  const [notionPageSize, setNotionPageSize] = useState('');
+  const [strapiPageSize, setStrapiPageSize] = useState('');
+  const [customPageSizeValue, setCustomPageSizeValue] = useState('');
 
   const [responseData, setResponseData] = useState<JsonValue | JsonValue[] | null>(null);
 
@@ -45,7 +48,8 @@ export default function AllAboutAPIs() {
   const [responseHeaders, setResponseHeaders] = useState<Record<string, string>>({});
 
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSizeString, setPageSizeString] = useState('');
+  const [pageSize, setPageSize] = useState(0);
   const [total, setTotal] = useState<number | null>(null);
   const [error, setError] = useState<string>('');
   const [loading, setLoading] = useState(false);
@@ -143,8 +147,8 @@ export default function AllAboutAPIs() {
     const mergedParams = [...queryParams.filter((p) => p.key.trim() !== '')];
 
     if (apiService === 'strapi') {
-      mergedParams.push({ key: 'pagination[page]', value: String(page) });
-      mergedParams.push({ key: 'pagination[pageSize]', value: String(pageSize) });
+      if (page) mergedParams.push({ key: 'pagination[page]', value: String(page) });
+      if (pageSize) mergedParams.push({ key: 'pagination[pageSize]', value: String(pageSize) });
       if (sortField) {
         mergedParams.push({ key: 'sort', value: `${sortField}:${sortOrder}` });
       }
@@ -154,6 +158,15 @@ export default function AllAboutAPIs() {
       if (sortField) {
         mergedParams.push({ key: 'sortField', value: sortField });
         mergedParams.push({ key: 'sortOrder', value: sortOrder });
+      }
+      if (pageFieldName && page) {
+        mergedParams.push({ key: pageFieldName, value: String(page) });
+      }
+      if (pageSizeFieldName && pageSize) {
+        mergedParams.push({ key: pageSizeFieldName, value: String(pageSize) });
+      }
+      if (totalFieldName && total) {
+        mergedParams.push({ key: totalFieldName, value: String(total) });
       }
     }
 
@@ -211,6 +224,7 @@ export default function AllAboutAPIs() {
               sorts: sortField
                 ? [{ property: sortField, direction: sortOrder === 'asc' ? 'ascending' : 'descending' }]
                 : undefined,
+              pageSize: notionPageSize || undefined,
             }
           : apiService === 'strapi'
             ? {
@@ -318,7 +332,8 @@ export default function AllAboutAPIs() {
   };
 
   const handlePageSizeChange = (newPageSize: number) => {
-    setPageSize(newPageSize);
+    setPageSizeString(String(newPageSize));
+    setPageSize(Number(pageSizeString));
     setPage(1);
     handleSubmit(undefined, undefined, true);
   };
@@ -551,9 +566,11 @@ export default function AllAboutAPIs() {
                     <NotionService
                       token={notionToken}
                       databaseId={notionDatabaseId}
-                      onChange={(token, id) => {
+                      pageSize={notionPageSize}
+                      onChange={(token, id, pageSize) => {
                         setNotionToken(token);
                         setNotionDatabaseId(id);
+                        setNotionPageSize(pageSize);
                       }}
                     />
                   )}
@@ -570,10 +587,11 @@ export default function AllAboutAPIs() {
                   )}
                   {apiService === 'strapi' && (
                     <StrapiService
-                      onChange={(url, token, version) => {
+                      onChange={(url, token, size, version) => {
                         setApiUrl(url);
                         setAuthType('bearer');
                         setAuthData(token);
+                        setStrapiPageSize(size);
                         setStrapiVersion(version);
                       }}
                     />
@@ -753,6 +771,18 @@ export default function AllAboutAPIs() {
                             />
                           </div>
                         </div>
+                        <div className={styles.group}>
+                          <label htmlFor="custom-page-size-value">페이지 사이즈 값</label>
+                          <div className={styles.value}>
+                            <input
+                              type="text"
+                              id="custom-page-size-value"
+                              placeholder="pageSize 값 입력"
+                              value={pageSizeString}
+                              onChange={(event) => setPageSizeString(event.target.value)}
+                            />
+                          </div>
+                        </div>
                       </div>
                       <div
                         id="content-authorization"
@@ -827,7 +857,7 @@ export default function AllAboutAPIs() {
                         {(apiService === 'strapi' || apiService === 'custom') && (
                           <Pagination
                             page={page}
-                            pageSize={pageSize}
+                            pageSize={Number(pageSize)}
                             total={total}
                             onPageChange={handlePageChange}
                             onPageSizeChange={handlePageSizeChange}

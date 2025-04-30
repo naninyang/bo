@@ -3,11 +3,13 @@ import styles from '@/styles/All.module.sass';
 export function NotionService({
   token,
   databaseId,
+  pageSize,
   onChange,
 }: {
   token: string;
   databaseId: string;
-  onChange: (token: string, databaseId: string) => void;
+  pageSize: string;
+  onChange: (token: string, databaseId: string, pageSize: string) => void;
 }) {
   return (
     <div className={styles.component}>
@@ -20,7 +22,7 @@ export function NotionService({
               type="password"
               id="notion-secret-token"
               value={token}
-              onChange={(e) => onChange(e.target.value, databaseId)}
+              onChange={(e) => onChange(e.target.value, databaseId, pageSize)}
               required
             />
           </div>
@@ -32,8 +34,20 @@ export function NotionService({
               type="text"
               id="notion-databaseid"
               value={databaseId}
-              onChange={(e) => onChange(token, e.target.value)}
+              onChange={(e) => onChange(token, e.target.value, pageSize)}
               required
+            />
+          </div>
+        </div>
+        <div className={styles.group}>
+          <label htmlFor="notion-page-size">Page size value (최대 100)</label>
+          <div className={styles.value}>
+            <input
+              type="text"
+              id="notion-page-size"
+              placeholder="Page size value (최대 100)"
+              value={pageSize}
+              onChange={(e) => onChange(token, databaseId, e.target.value)}
             />
           </div>
         </div>
