@@ -39,7 +39,6 @@ export default function AllAboutAPIs() {
   const [totalFieldName, setTotalFieldName] = useState('');
   const [notionPageSize, setNotionPageSize] = useState('');
   const [strapiPageSize, setStrapiPageSize] = useState('');
-  const [customPageSizeValue, setCustomPageSizeValue] = useState('');
 
   const [responseData, setResponseData] = useState<JsonValue | JsonValue[] | null>(null);
 
@@ -148,7 +147,7 @@ export default function AllAboutAPIs() {
 
     if (apiService === 'strapi') {
       if (page) mergedParams.push({ key: 'pagination[page]', value: String(page) });
-      if (pageSize) mergedParams.push({ key: 'pagination[pageSize]', value: String(pageSize) });
+      if (pageSize) mergedParams.push({ key: 'pagination[pageSize]', value: strapiPageSize || String(pageSize) });
       if (sortField) {
         mergedParams.push({ key: 'sort', value: `${sortField}:${sortOrder}` });
       }
