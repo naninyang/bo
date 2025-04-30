@@ -446,7 +446,7 @@ export default function JsonValidator({ onValidData }: Props) {
                           <div className={styles.value}>
                             <input
                               id="password"
-                              type="password"
+                              type="text"
                               value={basicPassword}
                               onChange={(event) => setBasicPassword(event.target.value)}
                             />

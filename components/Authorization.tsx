@@ -1,5 +1,6 @@
 import styles from '@/styles/All.module.sass';
 import { AuthData, AuthType } from '@/types';
+import { useState } from 'react';
 
 export type AuthorizationProps = {
   authType: AuthType;
@@ -7,6 +8,7 @@ export type AuthorizationProps = {
 };
 
 export function Authorization({ authType, onChange }: AuthorizationProps) {
+  const [isHidden, setIsHidden] = useState(false);
   return (
     <div className={styles.component}>
       <h3>Authorization</h3>
@@ -53,9 +55,10 @@ export function Authorization({ authType, onChange }: AuthorizationProps) {
               <label htmlFor="basic-password">Password</label>
               <div className={styles.value}>
                 <input
-                  type="password"
+                  type={isHidden ? 'password' : 'text'}
                   id="basic-password"
                   placeholder="Password"
+                  autoComplete="off"
                   onChange={(event) =>
                     onChange('basic', (prev) => {
                       const prevObj = typeof prev === 'object' && prev !== null ? prev : { username: '', password: '' };
@@ -67,6 +70,9 @@ export function Authorization({ authType, onChange }: AuthorizationProps) {
                   }
                 />
               </div>
+              <button type="button" onClick={() => setIsHidden(!isHidden)} className={isHidden ? styles.isHidden : ''}>
+                {isHidden ? '보기' : '숨기기'}
+              </button>
             </div>
           </div>
         )}
@@ -77,12 +83,17 @@ export function Authorization({ authType, onChange }: AuthorizationProps) {
               <label htmlFor="bearer-token">Token</label>
               <div className={styles.value}>
                 <input
-                  type="password"
+                  type="text"
+                  inputMode={isHidden ? 'text' : undefined}
                   id="bearer-token"
                   placeholder="Bearer Token"
                   onChange={(event) => onChange('bearer', event.target.value)}
+                  autoComplete={isHidden ? 'on' : 'off'}
                 />
               </div>
+              <button type="button" onClick={() => setIsHidden(!isHidden)} className={isHidden ? styles.isHidden : ''}>
+                {isHidden ? '보기' : '숨기기'}
+              </button>
             </div>
           </div>
         )}

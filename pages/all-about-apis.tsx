@@ -777,7 +777,7 @@ export default function AllAboutAPIs() {
                             <input
                               type="text"
                               id="custom-page-size-value"
-                              placeholder="pageSize 값 입력"
+                              placeholder="page size value"
                               value={pageSizeString}
                               onChange={(event) => setPageSizeString(event.target.value)}
                             />

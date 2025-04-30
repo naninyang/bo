@@ -214,7 +214,7 @@ section.section
         border-radius: ds.rem(3)
         padding: ds.rem(7)
 
-      select, input[type='number'], input[type='text'], label, span
+      select, input[type='number'], input[type='text'], input[type='password'], label, span
         height: ds.rem(37)
         font-size: ds.rem(18)
 
@@ -259,6 +259,27 @@ section.section
           resize: none
           font-family: monospace
           font-size: ds.rem(14)
+
+        input[inputmode="text"]
+          -webkit-text-security: disc
+
+        & + button
+          background-color: transparent
+          border-width: ds.rem(1)
+          border-style: solid
+          border-radius: ds.rem(24)
+          height: ds.rem(24)
+          padding: 0 ds.rem(7)
+          font-size: ds.rem(14)
+          color: ds.$hex-black
+
+          body[data-theme='dark'] &
+            color: ds.$hex-white
+
+          &.isHidden
+            background-color: ds.$hex-accent
+            color: ds.$hex-white
+            font-weight: 700
 
     .groups
       display: flex

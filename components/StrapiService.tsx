@@ -20,6 +20,8 @@ export default function StrapiService({ onChange }: Props) {
     onChange(url, token, version, pageSize);
   }, [strapiBaseUrl, token, version, collectionName, pageSize, onChange]);
 
+  const [isHidden, setIsHidden] = useState(false);
+
   return (
     <div className={styles.component}>
       <h3>Strapi CMS API</h3>
@@ -55,13 +57,18 @@ export default function StrapiService({ onChange }: Props) {
         <label htmlFor="strapi-token">Bearer Token</label>
         <div className={styles.value}>
           <input
-            type="password"
+            type="text"
+            inputMode={isHidden ? 'text' : undefined}
             id="strapi-token"
             value={token}
             onChange={(event) => setToken(event.target.value)}
+            autoComplete={isHidden ? 'on' : 'off'}
             required
           />
         </div>
+        <button type="button" onClick={() => setIsHidden(!isHidden)} className={isHidden ? styles.isHidden : ''}>
+          {isHidden ? '보기' : '숨기기'}
+        </button>
       </div>
       <div className={styles.groups}>
         <div className={styles.group}>
