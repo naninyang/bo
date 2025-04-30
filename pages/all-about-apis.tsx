@@ -536,12 +536,12 @@ export default function AllAboutAPIs() {
           </li>
         </ul>
         <div className={styles.form}>
-          <section className={styles.section}>
-            <div className={styles.module}>
-              <h2>엔드포인트 정보</h2>
-              <form onSubmit={(event) => handleSubmit(event, undefined, false)}>
-                <fieldset>
-                  <legend>엔드포인트 정보 입력폼</legend>
+          <form onSubmit={(event) => handleSubmit(event, undefined, false)}>
+            <fieldset>
+              <legend>엔드포인트 정보 입력폼</legend>
+              <section className={styles.section}>
+                <div className={styles.module}>
+                  <h2>{apiService === 'custom' ? 'API 정보 입력' : 'API 서비스 선택'}</h2>
                   <div className={styles.group}>
                     <label htmlFor="api-services">API Services</label>
                     <div className={styles.value}>
@@ -614,7 +614,11 @@ export default function AllAboutAPIs() {
                       </div>
                     </div>
                   )}
-                  {apiService === 'custom' && (
+                </div>
+              </section>
+              {apiService === 'custom' && (
+                <section className={`${styles.section} ${styles.custom}`}>
+                  <div className={styles.module}>
                     <div className={styles['collapse-button']}>
                       <ul>
                         <li>
@@ -655,8 +659,6 @@ export default function AllAboutAPIs() {
                         </li>
                       </ul>
                     </div>
-                  )}
-                  {apiService === 'custom' && (
                     <div className={styles['collapse-contents']}>
                       <div
                         id="content-params"
@@ -812,71 +814,74 @@ export default function AllAboutAPIs() {
                         <Headers headers={headers} onChange={setHeaders} onDuplicate={setHasHeaderDuplication} />
                       </div>
                     </div>
-                  )}
-                  <div className={styles.submit}>
-                    <RippleButton type="submit">
-                      <span>API 보기</span>
-                    </RippleButton>
+                    <div className={styles.submit}>
+                      <RippleButton type="submit">
+                        <span>API 보기</span>
+                      </RippleButton>
+                    </div>
                   </div>
-                </fieldset>
-              </form>
+                </section>
+              )}
+            </fieldset>
+          </form>
+        </div>
+        {(loading || error || responseData) && (
+          <section className={styles.section}>
+            <div className={styles.module}>
+              {responseData ? (
+                <div className={styles.headline}>
+                  <h2>데이터 보기</h2>
+                  <ul>
+                    <li>
+                      <button type="button" onClick={() => openDialog('body')}>
+                        Body (JSON) 보기
+                      </button>
+                    </li>
+                    <li>
+                      <button type="button" onClick={() => openDialog('headers')}>
+                        Headers 보기
+                      </button>
+                    </li>
+                  </ul>
+                </div>
+              ) : (
+                <h2>데이터 보기</h2>
+              )}
+              {(loading || error || responseData) && (
+                <div className={styles.result}>
+                  {responseData && (
+                    <>
+                      <div
+                        className={`${styles.table} ${loading ? styles['table-loading'] : ''} ${apiService === 'notion' && loading ? styles['notion-loading'] : ''}`}
+                      >
+                        {renderData()}
+                      </div>
+                      {console.log('page: ', page)}
+                      {console.log('pageSize: ', pageSize)}
+                      {console.log('total: ', total)}
+                      {(apiService === 'strapi' || apiService === 'custom') && (
+                        <Pagination
+                          page={page}
+                          pageSize={Number(pageSize)}
+                          total={total}
+                          onPageChange={handlePageChange}
+                          onPageSizeChange={handlePageSizeChange}
+                        />
+                      )}
+                      {apiService === 'notion' && nextCursor && (
+                        <button type="button" onClick={() => handleSubmit(undefined, nextCursor)}>
+                          <span>더보기</span>
+                        </button>
+                      )}
+                    </>
+                  )}
+                  {loading && <p className={styles.loading}>로딩 중...</p>}
+                  {error && <p className={styles.error}>{error}</p>}
+                </div>
+              )}
             </div>
           </section>
-          {(loading || error || responseData) && (
-            <section className={styles.section}>
-              <div className={styles.module}>
-                {responseData ? (
-                  <div className={styles.headline}>
-                    <h2>데이터 보기</h2>
-                    <ul>
-                      <li>
-                        <button type="button" onClick={() => openDialog('body')}>
-                          Body (JSON) 보기
-                        </button>
-                      </li>
-                      <li>
-                        <button type="button" onClick={() => openDialog('headers')}>
-                          Headers 보기
-                        </button>
-                      </li>
-                    </ul>
-                  </div>
-                ) : (
-                  <h2>데이터 보기</h2>
-                )}
-                {(loading || error || responseData) && (
-                  <div className={styles.result}>
-                    {responseData && (
-                      <>
-                        <div
-                          className={`${styles.table} ${loading ? styles['table-loading'] : ''} ${apiService === 'notion' && loading ? styles['notion-loading'] : ''}`}
-                        >
-                          {renderData()}
-                        </div>
-                        {(apiService === 'strapi' || apiService === 'custom') && (
-                          <Pagination
-                            page={page}
-                            pageSize={Number(pageSize)}
-                            total={total}
-                            onPageChange={handlePageChange}
-                            onPageSizeChange={handlePageSizeChange}
-                          />
-                        )}
-                        {apiService === 'notion' && nextCursor && (
-                          <button type="button" onClick={() => handleSubmit(undefined, nextCursor)}>
-                            <span>더보기</span>
-                          </button>
-                        )}
-                      </>
-                    )}
-                    {loading && <p className={styles.loading}>로딩 중...</p>}
-                    {error && <p className={styles.error}>{error}</p>}
-                  </div>
-                )}
-              </div>
-            </section>
-          )}
-        </div>
+        )}
       </div>
       {isDialogOpen && (
         <Dialog isOpen={isDialogOpen} onClose={closeDialog}>

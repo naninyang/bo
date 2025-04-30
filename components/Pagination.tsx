@@ -28,7 +28,7 @@ export function Pagination({ page, pageSize, total, onPageChange, onPageSizeChan
           다음
         </button>
       </div>
-      {onPageSizeChange && (
+      {pageSize > 0 && onPageSizeChange && (
         <div className={styles.pagesize}>
           <select value={pageSize} onChange={(e) => onPageSizeChange(Number(e.target.value))}>
             {[10, 20, 50, 100].map((size) => (

@@ -92,6 +92,250 @@
       flex-direction: column
       width: 100%
 
+      fieldset
+        display: flex
+        flex-direction: column
+        gap: ds.rem(12)
+        width: 100%
+
+        @include ds.mq(minSmall)
+          gap: ds.rem(5)
+
+        hr
+          @include ds.visually-hidden-focusable
+          position: static
+          border: 0
+          margin: ds.rem(12) 0
+
+        .collapse-button
+          border: 1px solid ds.$hex-gray-dark
+          border-bottom: 0
+          border-radius: ds.rem(17) ds.rem(17) 0 0
+
+          ul
+            display: flex
+
+            li
+              @include ds.col
+
+              button
+                transition: all .4s cubic-bezier(.4,0,.2,1)
+                background-color: transparent
+                border: 0
+                border-bottom: ds.rem(2) solid ds.$hex-gray-dark
+                border-left: ds.rem(1) solid ds.$hex-gray-dark
+                padding: ds.rem(7) 0
+                width: 100%
+
+                &:hover, &:focus-visible, &.current
+                  border-bottom: ds.rem(2) solid ds.$hex-accent
+                  font-weight: 700
+
+              &:first-of-type
+                button
+                  border-left: 0
+
+        .collapse-contents
+          padding: ds.rem(12) ds.rem(17)
+
+          > div
+            display: flex
+            flex-direction: column
+            gap: ds.rem(12)
+
+            &:not(.show)
+              display: none
+
+        .group
+          display: flex
+
+          @include ds.mq(maxExtraSmall)
+            flex-direction: column
+
+          @include ds.mq(minSmall)
+            align-items: center
+            gap: ds.rem(5)
+
+          label, span
+            display: flex
+            align-items: center
+            border-bottom: ds.rem(2) solid transparent
+            width: ds.rem(147)
+
+          select
+            cursor: pointer
+
+          textarea
+            border: 1px solid ds.$hex-gray-light
+            border-radius: ds.rem(3)
+            padding: ds.rem(7)
+
+          select, input[type='number'], input[type='text'], input[type='password'], label, span
+            height: ds.rem(37)
+            font-size: ds.rem(18)
+
+          select, input[type='number'], input[type='text'], input[type='password'], input:-webkit-autofill
+            border: 0
+            border-radius: 0
+            padding: 0
+
+          select, input[type='number'], input[type='text'], input[type='password'], input:-webkit-autofill, textarea
+            appearance: none
+            background-color: transparent
+            width: 100%
+            box-shadow: 0 0 0px 1000px white inset!important
+            border-bottom: 1px solid ds.$hex-gray-light
+            transition: all .4s cubic-bezier(.4,0,.2,1)
+            -webkit-text-fill-color: black!important
+
+            &:disabled
+              opacity: .2
+
+            &:focus, &:focus-visible
+              outline: 0
+              border-bottom: ds.rem(5) solid ds.$hex-accent
+              color: ds.$hex-accent
+              box-shadow: 0 0 0px 1000px white inset!important
+
+            body[data-theme='dark'] &
+              -webkit-text-fill-color: white!important
+              box-shadow: 0 0 0px 1000px black inset!important
+
+              &:focus, &:focus-visible
+                -webkit-text-fill-color: ds.$hex-accent!important
+
+          .value
+            @include ds.col
+
+            input, select, textarea
+              width: 100%
+
+            textarea
+              height: ds.rem(270)
+              resize: none
+              font-family: monospace
+              font-size: ds.rem(14)
+
+            input[inputmode="text"]
+              -webkit-text-security: disc
+
+            & + button
+              background-color: transparent
+              border-width: ds.rem(1)
+              border-style: solid
+              border-radius: ds.rem(24)
+              height: ds.rem(24)
+              padding: 0 ds.rem(7)
+              font-size: ds.rem(14)
+              color: ds.$hex-black
+
+              body[data-theme='dark'] &
+                color: ds.$hex-white
+
+              &.isHidden
+                background-color: ds.$hex-accent
+                color: ds.$hex-white
+                font-weight: 700
+
+        .groups
+          display: flex
+          gap: ds.rem(5)
+
+          @include ds.mq(maxSmall)
+            flex-direction: column
+
+          @include ds.mq(minMedium)
+            flex-wrap: wrap
+
+            .group
+              width: calc(50% - ds.rem(3))
+
+              &:nth-of-type(3)
+                width: 100%
+
+        .checkboxes
+          display: flex
+          gap: ds.rem(12)
+          @include ds.col
+
+          .checkbox
+            display: flex
+            @include ds.col
+            align-items: center
+            position: relative
+            height: ds.rem(37)
+
+            > div
+              display: flex
+              justify-content: center
+              align-items: center
+              width: ds.rem(24)
+              height: ds.rem(24)
+              background-color: ds.$hex-white
+              position: absolute
+              top: 50%
+              left: 0
+              transform: translateY(-50%)
+              border-radius: ds.rem(14)
+
+              body[data-theme='dark'] &
+                background-color: ds.$hex-dark
+
+              &.checked
+                svg
+                  path
+                    fill: ds.$hex-accent
+
+                    body[data-theme='dark'] &
+                      fill: ds.$hex-accent
+
+              &.unchecked
+                svg
+                  path
+                    fill: rgba(ds.$hex-dark, .7)
+
+                    body[data-theme='dark'] &
+                      fill: rgba(ds.$hex-light, .7)
+
+            input
+              @include ds.hidden-box
+              margin: 0
+              appearance: none
+              border-radius: 100%
+              width: ds.rem(24)
+              height: ds.rem(24)
+
+            label
+              position: relative
+              display: inline-block
+              height: auto
+              width: auto
+              padding-left: ds.rem(27)
+              font-size: ds.rem(16)
+              font-weight: 700
+              white-space: nowrap
+
+        > p
+          color: ds.$hex-danger
+          font-weight: 700
+
+          @include ds.mq(minSmall)
+            padding-left: ds.rem(122)
+
+        .submit
+          padding-top: ds.rem(12)
+          width: 100%
+
+          button
+            background-color: transparent
+            border: ds.rem(2) solid
+            border-radius: ds.rem(3)
+            width: 100%
+            height: ds.rem(52)
+            font-size: ds.rem(16)
+            @include ds.fw(500)
+            color: ds.$hex-accent
+
 section.section
   display: flex
   flex-direction: column
@@ -115,6 +359,10 @@ section.section
     body[data-theme='dark'] &
       background-color: ds.$hex-black
 
+  &.custom
+    .module
+      padding: 0
+
   .module
     display: flex
     flex-direction: column
@@ -123,7 +371,7 @@ section.section
     padding: ds.rem(17)
 
     @include ds.mq(minSmall)
-      border: ds.rem(2) solid ds.$hex-light
+      border: ds.rem(2) solid ds.$hex-gray-dark
       border-radius: ds.rem(17)
 
       body[data-theme='dark'] &
@@ -136,249 +384,6 @@ section.section
     > p
       @include ds.fw(600)
       text-align: center
-
-  fieldset
-    display: flex
-    flex-direction: column
-    gap: ds.rem(12)
-    width: 100%
-
-    @include ds.mq(minSmall)
-      gap: ds.rem(5)
-
-    hr
-      @include ds.visually-hidden-focusable
-      position: static
-      border: 0
-      margin: ds.rem(12) 0
-
-    .collapse-button
-      margin: ds.rem(23) 0
-      border: 1px solid ds.$hex-gray-dark
-      border-bottom: 0
-      border-radius: ds.rem(3)
-
-      ul
-        display: flex
-
-        li
-          @include ds.col
-
-          button
-            transition: all .4s cubic-bezier(.4,0,.2,1)
-            background-color: transparent
-            border: 0
-            border-bottom: ds.rem(2) solid ds.$hex-gray-dark
-            border-left: ds.rem(1) solid ds.$hex-gray-dark
-            padding: ds.rem(7) 0
-            width: 100%
-
-            &:hover, &:focus-visible, &.current
-              border-bottom: ds.rem(2) solid ds.$hex-accent
-              font-weight: 700
-
-          &:first-of-type
-            button
-              border-left: 0
-
-    .collapse-contents
-      > div
-        display: flex
-        flex-direction: column
-        gap: ds.rem(12)
-
-        &:not(.show)
-          display: none
-
-    .group
-      display: flex
-
-      @include ds.mq(maxExtraSmall)
-        flex-direction: column
-
-      @include ds.mq(minSmall)
-        align-items: center
-        gap: ds.rem(5)
-
-      label, span
-        display: flex
-        align-items: center
-        border-bottom: ds.rem(2) solid transparent
-        width: ds.rem(147)
-
-      select
-        cursor: pointer
-
-      textarea
-        border: 1px solid ds.$hex-gray-light
-        border-radius: ds.rem(3)
-        padding: ds.rem(7)
-
-      select, input[type='number'], input[type='text'], input[type='password'], label, span
-        height: ds.rem(37)
-        font-size: ds.rem(18)
-
-      select, input[type='number'], input[type='text'], input[type='password'], input:-webkit-autofill
-        border: 0
-        border-radius: 0
-        padding: 0
-
-      select, input[type='number'], input[type='text'], input[type='password'], input:-webkit-autofill, textarea
-        appearance: none
-        background-color: transparent
-        width: 100%
-        box-shadow: 0 0 0px 1000px white inset!important
-        border-bottom: 1px solid ds.$hex-gray-light
-        transition: all .4s cubic-bezier(.4,0,.2,1)
-        -webkit-text-fill-color: black!important
-
-        &:disabled
-          opacity: .2
-
-        &:focus, &:focus-visible
-          outline: 0
-          border-bottom: ds.rem(5) solid ds.$hex-accent
-          color: ds.$hex-accent
-          box-shadow: 0 0 0px 1000px white inset!important
-
-        body[data-theme='dark'] &
-          -webkit-text-fill-color: white!important
-          box-shadow: 0 0 0px 1000px black inset!important
-
-          &:focus, &:focus-visible
-            -webkit-text-fill-color: ds.$hex-accent!important
-
-      .value
-        @include ds.col
-
-        input, select, textarea
-          width: 100%
-
-        textarea
-          height: ds.rem(270)
-          resize: none
-          font-family: monospace
-          font-size: ds.rem(14)
-
-        input[inputmode="text"]
-          -webkit-text-security: disc
-
-        & + button
-          background-color: transparent
-          border-width: ds.rem(1)
-          border-style: solid
-          border-radius: ds.rem(24)
-          height: ds.rem(24)
-          padding: 0 ds.rem(7)
-          font-size: ds.rem(14)
-          color: ds.$hex-black
-
-          body[data-theme='dark'] &
-            color: ds.$hex-white
-
-          &.isHidden
-            background-color: ds.$hex-accent
-            color: ds.$hex-white
-            font-weight: 700
-
-    .groups
-      display: flex
-      gap: ds.rem(5)
-
-      @include ds.mq(maxSmall)
-        flex-direction: column
-
-      @include ds.mq(minMedium)
-        flex-wrap: wrap
-
-        .group
-          width: calc(50% - ds.rem(3))
-
-          &:nth-of-type(3)
-            width: 100%
-
-    .checkboxes
-      display: flex
-      gap: ds.rem(12)
-      @include ds.col
-
-      .checkbox
-        display: flex
-        @include ds.col
-        align-items: center
-        position: relative
-        height: ds.rem(37)
-
-        > div
-          display: flex
-          justify-content: center
-          align-items: center
-          width: ds.rem(24)
-          height: ds.rem(24)
-          background-color: ds.$hex-white
-          position: absolute
-          top: 50%
-          left: 0
-          transform: translateY(-50%)
-          border-radius: ds.rem(14)
-
-          body[data-theme='dark'] &
-            background-color: ds.$hex-dark
-
-          &.checked
-            svg
-              path
-                fill: ds.$hex-accent
-
-                body[data-theme='dark'] &
-                  fill: ds.$hex-accent
-
-          &.unchecked
-            svg
-              path
-                fill: rgba(ds.$hex-dark, .7)
-
-                body[data-theme='dark'] &
-                  fill: rgba(ds.$hex-light, .7)
-
-        input
-          @include ds.hidden-box
-          margin: 0
-          appearance: none
-          border-radius: 100%
-          width: ds.rem(24)
-          height: ds.rem(24)
-
-        label
-          position: relative
-          display: inline-block
-          height: auto
-          width: auto
-          padding-left: ds.rem(27)
-          font-size: ds.rem(16)
-          font-weight: 700
-          white-space: nowrap
-
-    > p
-      color: ds.$hex-danger
-      font-weight: 700
-
-      @include ds.mq(minSmall)
-        padding-left: ds.rem(122)
-
-    .submit
-      padding-top: ds.rem(12)
-      width: 100%
-
-      button
-        background-color: transparent
-        border: ds.rem(2) solid
-        border-radius: ds.rem(3)
-        width: 100%
-        height: ds.rem(52)
-        font-size: ds.rem(16)
-        @include ds.fw(500)
-        color: ds.$hex-accent
 
   .result
     position: relative
