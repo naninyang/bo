@@ -1,6 +1,8 @@
 import React, { ReactNode, useState } from 'react';
+import { Inter } from 'next/font/google';
 import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 import { a11yDark } from 'react-syntax-highlighter/dist/esm/styles/prism';
+import { AuthData, AuthType } from '@/types';
 import Seo from '@/components/Seo';
 import Anchor from '@/components/Anchor';
 import RippleButton from '@/components/RippleButton';
@@ -13,10 +15,14 @@ import Dialog from '@/components/Dialog';
 import { Pagination } from '@/components/Pagination';
 import styles from '@/styles/All.module.sass';
 import { LeftArrow } from '@/components/Svgs';
-import { AuthData, AuthType } from '@/types';
 
 type JsonValue = string | number | boolean | null | JsonValue[] | { [key: string]: JsonValue };
 type QueryParam = { key: string; value: string };
+
+const Interr = Inter({
+  subsets: ['cyrillic'],
+  variable: '--inter',
+});
 
 export default function AllAboutAPIs() {
   const [apiService, setApiService] = useState('custom');
@@ -852,14 +858,11 @@ export default function AllAboutAPIs() {
                   {responseData && (
                     <>
                       <div
-                        className={`${styles.table} ${loading ? styles['table-loading'] : ''} ${apiService === 'notion' && loading ? styles['notion-loading'] : ''}`}
+                        className={`${Interr.variable} ${styles.table} ${loading ? styles['table-loading'] : ''} ${apiService === 'notion' && loading ? styles['notion-loading'] : ''}`}
                       >
                         {renderData()}
                       </div>
-                      {console.log('page: ', page)}
-                      {console.log('pageSize: ', pageSize)}
-                      {console.log('total: ', total)}
-                      {(apiService === 'strapi' || apiService === 'custom') && (
+                      {(apiService === 'strapi' || (apiService === 'custom' && pageSize > 0)) && (
                         <Pagination
                           page={page}
                           pageSize={Number(pageSize)}

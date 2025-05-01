@@ -400,24 +400,30 @@ section.section
       margin-bottom: 1rem
       vertical-align: top
 
+      > table
+        border: 1px solid gray
+        border-bottom: 0
+
       table
         caption-side: bottom
         border-collapse: collapse
-        border: ds.rem(1) solid ds.$hex-gray-light
-        border-left: 0
-        border-top: 0
-
-        body[data-theme='dark'] &
-          border-color: ds.$hex-gray-dark
+        border-spacing: 0
+        border-color: gray
 
         th
           text-align: -webkit-match-parent
 
+        tr
+          th, td
+            &:last-of-type
+              border-right: 0
+
         th, td
-          border: ds.rem(1) solid ds.$hex-gray-light
-          border-right: 0
-          border-bottom: 0
+          border: 1px solid gray
+          border-top: 0
+          border-left: 0
           padding: 0
+          font-family: var(--inter), var(--square), sans-serif
 
           body[data-theme='dark'] &
             border-color: ds.$hex-gray-dark
@@ -439,6 +445,11 @@ section.section
           font-weight: 400
           color: ds.$hex-gray-light
           vertical-align: top
+
+          > table
+            table-layout: auto
+            border-top: 0
+            width: 100%
 
           span
             overflow-wrap: break-word
@@ -675,6 +686,10 @@ section.section
       caption-side: bottom
       border-collapse: collapse
       min-width: 100%
+
+      tr
+        td:first-of-type
+          text-transform: capitalize
 
       th
         text-align: -webkit-match-parent
