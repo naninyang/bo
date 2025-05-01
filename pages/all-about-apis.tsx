@@ -385,14 +385,14 @@ export default function AllAboutAPIs() {
       }
 
       return (
-        <>
+        <span>
           {data.map((item, idx) => (
             <React.Fragment key={idx}>
               {String(item)}
               {idx < data.length - 1 ? ', ' : ''}
             </React.Fragment>
           ))}
-        </>
+        </span>
       );
     }
 
