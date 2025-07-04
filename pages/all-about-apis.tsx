@@ -602,23 +602,30 @@ export default function AllAboutAPIs() {
                     />
                   )}
                   {apiService !== 'custom' && (
-                    <div className={styles.group}>
-                      <label htmlFor="sorting-option">정렬 옵션</label>
-                      <div className={styles.value}>
-                        <input
-                          type="text"
-                          placeholder="정렬 기준 필드 (필수 아님)"
-                          value={sortField}
-                          onChange={(e) => setSortField(e.target.value)}
-                        />
+                    <>
+                      <div className={styles.group}>
+                        <label htmlFor="sorting-option">정렬 옵션</label>
+                        <div className={styles.value}>
+                          <input
+                            type="text"
+                            placeholder="정렬 기준 필드 (필수 아님)"
+                            value={sortField}
+                            onChange={(e) => setSortField(e.target.value)}
+                          />
+                        </div>
+                        <div className={styles.value}>
+                          <select value={sortOrder} onChange={(e) => setSortOrder(e.target.value as 'asc' | 'desc')}>
+                            <option value="asc">오름차순 (asc)</option>
+                            <option value="desc">내림차순 (desc)</option>
+                          </select>
+                        </div>
                       </div>
-                      <div className={styles.value}>
-                        <select value={sortOrder} onChange={(e) => setSortOrder(e.target.value as 'asc' | 'desc')}>
-                          <option value="asc">오름차순 (asc)</option>
-                          <option value="desc">내림차순 (desc)</option>
-                        </select>
+                      <div className={styles.submit}>
+                        <RippleButton type="submit">
+                          <span>API 보기</span>
+                        </RippleButton>
                       </div>
-                    </div>
+                    </>
                   )}
                 </div>
               </section>
